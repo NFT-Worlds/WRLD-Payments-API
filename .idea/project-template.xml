@@ -1,3 +1,0 @@
-<template>
-  <input-field default="net.arcade.core.listeners">IJ_BASE_PACKAGE</input-field>
-</template>
