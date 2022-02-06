@@ -1,0 +1,5 @@
+name: Wallet
+version: 1.0
+author: Jacob
+main: com.nftworlds.wallet.Wallet
+api-version: 1.17

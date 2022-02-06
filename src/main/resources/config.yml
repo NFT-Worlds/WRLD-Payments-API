@@ -1,0 +1,4 @@
+server-wallet: 0x0000000000000000000000000000000000000000
+node-url:
+safety:
+  send-wrld: false
