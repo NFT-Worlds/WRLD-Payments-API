@@ -15,26 +15,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class NFTWorlds extends JavaPlugin {
-
     private static NFTWorlds plugin;
-    @Getter
-    private Config nftConfig;
 
-    @Getter
-    private final ExecutorService executorService = Executors.newFixedThreadPool(5); //May or may not need eventually idk yet
+    @Getter private Config nftConfig;
+    @Getter private final ExecutorService executorService = Executors.newFixedThreadPool(5); //May or may not need eventually idk yet
 
-    //Contracts:
-    @Getter
-    private Players players;
-    @Getter
-    private WRLD wrld;
+    //Contracts
+    @Getter private Players players;
+    @Getter private WRLD wrld;
 
-    //RPCs:
-    @Getter
-    private Polygon polygonRPC;
-    @Getter
-    private Ethereum ethereumRPC;
-
+    //RPCs
+    @Getter private Polygon polygonRPC;
+    @Getter private Ethereum ethereumRPC;
 
     public void onEnable() {
         plugin = this;
@@ -65,5 +57,4 @@ public class NFTWorlds extends JavaPlugin {
     public static NFTWorlds getInstance() {
         return plugin;
     }
-
 }
