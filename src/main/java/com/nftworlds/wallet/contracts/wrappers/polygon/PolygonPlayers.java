@@ -1,4 +1,4 @@
-package com.nftworlds.wallet.contracts.polygon;
+package com.nftworlds.wallet.contracts.wrapper.polygon;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;

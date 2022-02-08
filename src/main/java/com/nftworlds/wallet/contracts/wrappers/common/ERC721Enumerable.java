@@ -1,4 +1,4 @@
-package com.nftworlds.wallet.contracts.common;
+package com.nftworlds.wallet.contracts.wrapper.common;
 
 import java.math.BigInteger;
 import java.util.Arrays;
