@@ -9,6 +9,11 @@ public class WRLD {
     private PolygonWRLDToken polygonWRLDTokenContract;
 
     public WRLD() {
+        /*
+            TODO: Contract loading should use the corresponding contract addresses set in the plugin's
+            Config yml file.
+         */
+
         this.ethereumWRLDTokenContract = EthereumWRLDToken.load(/* TODO */);
         this.polygonWRLDTokenContract = PolygonWRLDToken.load(/* TODO */);
     }

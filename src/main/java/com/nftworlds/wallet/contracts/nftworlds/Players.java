@@ -1,13 +1,18 @@
 package com.nftworlds.wallet.contracts.nftworlds;
 
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonPlayers;
-import org.json.*;
+import com.nftworlds.wallet.providers.Polygon;
 import org.json.simple.JSONObject;
 
 public class Players {
     private PolygonPlayers polygonPlayersContract;
 
     public Players() {
+        /*
+            TODO: Contract loading should use the corresponding contract addresses set in the plugin's
+            Config yml file.
+         */
+
         this.polygonPlayersContract = PolygonPlayers.load(/* TODO */);
     }
 
