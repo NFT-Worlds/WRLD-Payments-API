@@ -1,6 +1,6 @@
 package com.nftworlds.wallet.listeners;
 
-import com.nftworlds.wallet.Wallet;
+import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.objects.NFTPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -9,10 +9,10 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 public class PlayerListener implements Listener {
 
-    private Wallet plugin;
+    private NFTWorlds plugin;
 
-    public PlayerListener(Wallet instance) {
-        this.plugin = instance;
+    public PlayerListener() {
+        this.plugin = NFTWorlds.getInstance();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

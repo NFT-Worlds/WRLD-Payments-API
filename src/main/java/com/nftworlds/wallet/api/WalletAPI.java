@@ -1,6 +1,7 @@
 package com.nftworlds.wallet.api;
 
 import com.nftworlds.wallet.objects.NFTPlayer;
+import com.nftworlds.wallet.objects.Wallet;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -13,7 +14,7 @@ public class WalletAPI {
      * @param player
      * @return player's wallet
      */
-    public String[] getWallets(Player player) {
+    public Wallet[] getWallets(Player player) {
         return getWallets(player.getUniqueId());
     }
 
@@ -22,7 +23,7 @@ public class WalletAPI {
      * @param uuid
      * @return player's wallet
      */
-    public String[] getWallets(UUID uuid) {
+    public Wallet[] getWallets(UUID uuid) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
             return player.getWallets();
@@ -44,7 +45,7 @@ public class WalletAPI {
      * @param uuid
      * @return player's wallet
      */
-    public String getPrimaryWallet(UUID uuid) {
+    public Wallet getPrimaryWallet(UUID uuid) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
             return player.getPrimaryWallet();
@@ -72,7 +73,7 @@ public class WalletAPI {
     public void sendWRLD(UUID uuid, int amount, String reason) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
-            String wallet = player.getPrimaryWallet();
+            Wallet wallet = player.getPrimaryWallet();
             //TODO: Send WRLD to wallet
         }
     }

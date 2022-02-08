@@ -4,6 +4,8 @@ import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonPlayers;
 import com.nftworlds.wallet.providers.Polygon;
 import org.json.simple.JSONObject;
 
+import java.util.List;
+
 public class Players {
     private PolygonPlayers polygonPlayersContract;
 
@@ -16,17 +18,19 @@ public class Players {
         this.polygonPlayersContract = PolygonPlayers.load(/* TODO */);
     }
 
-    public String getPlayerPrimaryWallet(String playerUUID) {
+    //NOTE: All of these lookups can initially be done async on the join event (When a new instance of NFTPlayer is created). Then they'll be cached.
+
+    public String getPlayerPrimaryWallet(String playerUUID) throws Exception {
         // TODO: returns async? or?
         return this.polygonPlayersContract.getPlayerPrimaryWallet(playerUUID).send();
     }
 
-    public String[] getPlayerSecondaryWallets(String playerUUID) {
+    public List<String> getPlayerSecondaryWallets(String playerUUID) throws Exception {
         // TODO: returns async? or?
         return this.polygonPlayersContract.getPlayerSecondaryWallets(playerUUID).send();
     }
 
-    public JSONObject getPlayerStateData(String playerUUID, String setterWalletAddress) {
+    public JSONObject getPlayerStateData(String playerUUID, String setterWalletAddress) throws Exception {
         // TODO: returns async? or?
         String stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterWalletAddress, true).send();
 

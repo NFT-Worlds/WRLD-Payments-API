@@ -12,14 +12,15 @@ public class NFTPlayer {
     private static HashSet<NFTPlayer> players = new HashSet<>();
 
     private UUID uuid;
-    private String wallets[];
+    private Wallet wallets[]; //Primary is wallets[0]
 
     public NFTPlayer(UUID uuid) {
         this.uuid = uuid;
+        //TODO: Get player's address(s) from database
         players.add(this);
     }
 
-    public String getPrimaryWallet() {
+    public Wallet getPrimaryWallet() {
         return wallets[0];
     }
 

@@ -1,15 +1,28 @@
 package com.nftworlds.wallet;
 
+import com.nftworlds.wallet.config.Config;
 import com.nftworlds.wallet.listeners.PlayerListener;
+import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Wallet extends JavaPlugin {
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
-    private Wallet plugin;
+public class NFTWorlds extends JavaPlugin {
+
+    private static NFTWorlds plugin;
+    @Getter
+    private Config nftConfig;
+
+    @Getter
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
     
     public void onEnable() {
         plugin = this;
+
+        (nftConfig = new Config()).registerConfig();
 
         registerEvents();
 
@@ -23,7 +36,11 @@ public class Wallet extends JavaPlugin {
 
     public void registerEvents() {
         PluginManager manager = getServer().getPluginManager();
-        manager.registerEvents(new PlayerListener(this), this);
+        manager.registerEvents(new PlayerListener(), this);
+    }
+
+    public static NFTWorlds getInstance() {
+        return plugin;
     }
 
 }

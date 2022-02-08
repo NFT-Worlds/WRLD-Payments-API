@@ -1,5 +1,6 @@
 package com.nftworlds.wallet.event;
 
+import com.nftworlds.wallet.objects.Wallet;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
@@ -11,11 +12,11 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerTransactEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private String wallet;
+    private Wallet wallet;
     private int amount;
     private String reason;
 
-    public PlayerTransactEvent(@NotNull final Player player, @NotNull final String wallet, @NotNull final int amount, @NotNull final String reason) {
+    public PlayerTransactEvent(@NotNull final Player player, @NotNull final Wallet wallet, @NotNull final int amount, @NotNull final String reason) {
         super(player);
         this.wallet = wallet;
         this.amount = amount;
@@ -27,7 +28,7 @@ public class PlayerTransactEvent extends PlayerEvent {
      * @return Player's wallet
      */
     @NotNull
-    public String getWallet() {
+    public Wallet getWallet() {
         return wallet;
     }
 

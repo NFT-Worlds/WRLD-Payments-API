@@ -18,12 +18,12 @@ public class WRLD {
         this.polygonWRLDTokenContract = PolygonWRLDToken.load(/* TODO */);
     }
 
-    public BigInteger ethereum_getBalance(String walletAddress) {
+    public BigInteger ethereum_getBalance(String walletAddress) throws Exception {
         // TODO: .send returns async and not a biginteger?
         return this.ethereumWRLDTokenContract.balanceOf(walletAddress).send();
     }
 
-    public BigInteger polygon_getBalance(String walletAddress) {
+    public BigInteger polygon_getBalance(String walletAddress) throws Exception {
         // TODO: .send returns async and not a biginteger?
         return this.polygonWRLDTokenContract.balanceOf(walletAddress).send();
     }
