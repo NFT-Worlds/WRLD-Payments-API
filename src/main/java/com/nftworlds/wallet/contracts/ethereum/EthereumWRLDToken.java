@@ -61,13 +61,7 @@ public class EthereumWRLDToken extends Contract {
 
     public static final String FUNC_NAME = "name";
 
-    public static final String FUNC_OWNER = "owner";
-
-    public static final String FUNC_RENOUNCEOWNERSHIP = "renounceOwnership";
-
     public static final String FUNC_SYMBOL = "symbol";
-
-    public static final String FUNC_TOGGLECLAIM = "toggleClaim";
 
     public static final String FUNC_TOTALSUPPLY = "totalSupply";
 
@@ -307,34 +301,11 @@ public class EthereumWRLDToken extends Contract {
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
-    public RemoteFunctionCall<String> owner() {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_OWNER,
-                Arrays.<Type>asList(),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
-        return executeRemoteCallSingleValueReturn(function, String.class);
-    }
-
-    public RemoteFunctionCall<TransactionReceipt> renounceOwnership() {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_RENOUNCEOWNERSHIP,
-                Arrays.<Type>asList(),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
-    }
-
     public RemoteFunctionCall<String> symbol() {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_SYMBOL,
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
-    }
-
-    public RemoteFunctionCall<TransactionReceipt> toggleClaim(Boolean _claimEnabled) {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_TOGGLECLAIM,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Bool(_claimEnabled)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
     }
 
     public RemoteFunctionCall<BigInteger> totalSupply() {

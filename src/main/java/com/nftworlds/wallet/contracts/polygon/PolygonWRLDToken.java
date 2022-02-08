@@ -45,8 +45,6 @@ public class PolygonWRLDToken extends Contract {
 
     public static final String FUNC_CAP = "cap";
 
-    public static final String FUNC_CHILDCHAINMANAGERPROXY = "childChainManagerProxy";
-
     public static final String FUNC_DECIMALS = "decimals";
 
     public static final String FUNC_DECREASEALLOWANCE = "decreaseAllowance";
@@ -61,17 +59,7 @@ public class PolygonWRLDToken extends Contract {
 
     public static final String FUNC_INCREASEALLOWANCE = "increaseAllowance";
 
-    public static final String FUNC_ISTRUSTEDFORWARDER = "isTrustedForwarder";
-
     public static final String FUNC_NAME = "name";
-
-    public static final String FUNC_OWNER = "owner";
-
-    public static final String FUNC_RENOUNCEOWNERSHIP = "renounceOwnership";
-
-    public static final String FUNC_SETFEERECIPIENT = "setFeeRecipient";
-
-    public static final String FUNC_SETFEES = "setFees";
 
     public static final String FUNC_SYMBOL = "symbol";
 
@@ -81,15 +69,11 @@ public class PolygonWRLDToken extends Contract {
 
     public static final String FUNC_TRANSFERFROM = "transferFrom";
 
-    public static final String FUNC_TRANSFEROWNERSHIP = "transferOwnership";
-
     public static final String FUNC_TRANSFERWITHFEE = "transferWithFee";
 
     public static final String FUNC_TRANSFERWITHFEEREF = "transferWithFeeRef";
 
     public static final String FUNC_TRANSFERWITHREF = "transferWithRef";
-
-    public static final String FUNC_UPDATECHILDCHAINMANAGER = "updateChildChainManager";
 
     public static final String FUNC_WITHDRAW = "withdraw";
 
@@ -298,13 +282,6 @@ public class PolygonWRLDToken extends Contract {
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
-    public RemoteFunctionCall<String> childChainManagerProxy() {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_CHILDCHAINMANAGERPROXY,
-                Arrays.<Type>asList(),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
-        return executeRemoteCallSingleValueReturn(function, String.class);
-    }
-
     public RemoteFunctionCall<BigInteger> decimals() {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_DECIMALS,
                 Arrays.<Type>asList(),
@@ -360,51 +337,11 @@ public class PolygonWRLDToken extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<Boolean> isTrustedForwarder(String forwarder) {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_ISTRUSTEDFORWARDER,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, forwarder)),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
-        return executeRemoteCallSingleValueReturn(function, Boolean.class);
-    }
-
     public RemoteFunctionCall<String> name() {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_NAME,
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
-    }
-
-    public RemoteFunctionCall<String> owner() {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_OWNER,
-                Arrays.<Type>asList(),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
-        return executeRemoteCallSingleValueReturn(function, String.class);
-    }
-
-    public RemoteFunctionCall<TransactionReceipt> renounceOwnership() {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_RENOUNCEOWNERSHIP,
-                Arrays.<Type>asList(),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
-    }
-
-    public RemoteFunctionCall<TransactionReceipt> setFeeRecipient(String recipient) {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_SETFEERECIPIENT,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, recipient)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
-    }
-
-    public RemoteFunctionCall<TransactionReceipt> setFees(BigInteger _feeBps, BigInteger _feeFixed, BigInteger _feeCap) {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_SETFEES,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_feeBps),
-                new org.web3j.abi.datatypes.generated.Uint256(_feeFixed),
-                new org.web3j.abi.datatypes.generated.Uint256(_feeCap)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
     }
 
     public RemoteFunctionCall<String> symbol() {
@@ -440,14 +377,6 @@ public class PolygonWRLDToken extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> transferOwnership(String newOwner) {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_TRANSFEROWNERSHIP,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, newOwner)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
-    }
-
     public RemoteFunctionCall<TransactionReceipt> transferWithFee(String recipient, BigInteger amount) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_TRANSFERWITHFEE,
@@ -473,14 +402,6 @@ public class PolygonWRLDToken extends Contract {
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, recipient),
                 new org.web3j.abi.datatypes.generated.Uint256(amount),
                 new org.web3j.abi.datatypes.generated.Uint256(ref)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
-    }
-
-    public RemoteFunctionCall<TransactionReceipt> updateChildChainManager(String _childChainManagerProxy) {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_UPDATECHILDCHAINMANAGER,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _childChainManagerProxy)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
