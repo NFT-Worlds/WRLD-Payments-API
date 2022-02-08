@@ -1,7 +1,7 @@
 package com.nftworlds.wallet.contracts.nftworlds;
 
+import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonPlayers;
-import com.nftworlds.wallet.providers.Polygon;
 import org.json.simple.JSONObject;
 
 import java.util.List;
@@ -10,12 +10,7 @@ public class Players {
     private PolygonPlayers polygonPlayersContract;
 
     public Players() {
-        /*
-            TODO: Contract loading should use the corresponding contract addresses set in the plugin's
-            Config yml file.
-         */
-
-        this.polygonPlayersContract = PolygonPlayers.load(/* TODO */);
+        this.polygonPlayersContract = PolygonPlayers.load(NFTWorlds.getInstance().getNftConfig().getPolygonPlayerContract());
     }
 
     //NOTE: All of these lookups can initially be done async on the join event (When a new instance of NFTPlayer is created). Then they'll be cached.

@@ -9,7 +9,6 @@ public class Ethereum {
     @Getter private static Web3j ethereumWeb3j;
 
     public Ethereum() {
-        String ethRpcEndpoint = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
-        this.ethereumWeb3j = Web3j.build(new HttpService(/* eth rpc endpoint from config */));
+        this.ethereumWeb3j = Web3j.build(new HttpService(NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc()));
     }
 }

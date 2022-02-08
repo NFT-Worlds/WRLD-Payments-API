@@ -9,6 +9,10 @@ import java.util.UUID;
 
 public class WalletAPI {
 
+    //TODO: I'm gonna redo this entire api so it's cleaner
+
+
+
     /**
      * Get a player's wallet
      * @param player
@@ -36,7 +40,7 @@ public class WalletAPI {
      * @param player
      * @return player's wallet
      */
-    public String getPrimaryWallet(Player player) {
+    public Wallet getPrimaryWallet(Player player) {
         return getPrimaryWallet(player.getUniqueId());
     }
 

@@ -15,6 +15,10 @@ public class Config {
     private String ethereumHttpsRpc;
     private String serverWalletAddress;
 
+    private String polygonPlayerContract;
+    private String polygonWrldContract;
+    private String ethereumWrldContract;
+
     public void registerConfig() {
         NFTWorlds wallet = NFTWorlds.getInstance();
         FileConfiguration config = wallet.getConfig();
@@ -25,12 +29,32 @@ public class Config {
         this.ethereumHttpsRpc = config.getString("ethereum_https_rpc");
 
         String address = config.getString("server_wallet_address");
-        if (AddressUtil.validAddress(address.toLowerCase()) && AddressUtil.checksumAddress(address.toLowerCase())) {
+        if (validateAddress(address, "Server Wallet Address")) {
             this.serverWalletAddress = address;
-        } else {
-            Bukkit.getLogger().log(Level.WARNING, "Server wallet address is an invalid format. Check config.yml.");
-            wallet.getServer().getPluginManager().disablePlugin(wallet);
         }
+
+        String polygonPlayerContract = config.getString("polygon_player_contract");
+        if (validateAddress(polygonPlayerContract, "Polygon Player Contract")) {
+            this.polygonPlayerContract = polygonPlayerContract;
+        }
+        String polygonWrldContract = config.getString("polygon_wrld_contract");
+        if (validateAddress(polygonWrldContract, "Polygon WRLD Contract")) {
+            this.polygonWrldContract = polygonWrldContract;
+        }
+        String ethereumWrldContract = config.getString("ethereum_wrld_contract");
+        if (validateAddress(ethereumWrldContract, "Ethereum WRLD Contract")) {
+            this.ethereumWrldContract = ethereumWrldContract;
+        }
+
+    }
+
+    public boolean validateAddress(String address, String name) {
+        if (!AddressUtil.validAddress(address.toLowerCase()) || !AddressUtil.checksumAddress(address.toLowerCase())) {
+            Bukkit.getLogger().log(Level.WARNING, name + " is an invalid format. Check config.yml.");
+            Bukkit.getServer().getPluginManager().disablePlugin(NFTWorlds.getInstance());
+            return false;
+        }
+        return true;
     }
 
 }

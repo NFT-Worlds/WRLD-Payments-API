@@ -1,6 +1,9 @@
 package com.nftworlds.wallet.contracts.nftworlds;
 
 import java.math.BigInteger;
+
+import com.nftworlds.wallet.NFTWorlds;
+import com.nftworlds.wallet.config.Config;
 import com.nftworlds.wallet.contracts.wrappers.ethereum.EthereumWRLDToken;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
 
@@ -9,13 +12,9 @@ public class WRLD {
     private PolygonWRLDToken polygonWRLDTokenContract;
 
     public WRLD() {
-        /*
-            TODO: Contract loading should use the corresponding contract addresses set in the plugin's
-            Config yml file.
-         */
-
-        this.ethereumWRLDTokenContract = EthereumWRLDToken.load(/* TODO */);
-        this.polygonWRLDTokenContract = PolygonWRLDToken.load(/* TODO */);
+        Config config = NFTWorlds.getInstance().getNftConfig();
+        this.ethereumWRLDTokenContract = EthereumWRLDToken.load(config.getEthereumWrldContract());
+        this.polygonWRLDTokenContract = PolygonWRLDToken.load(config.getPolygonWrldContract());
     }
 
     public BigInteger ethereum_getBalance(String walletAddress) throws Exception {
@@ -28,5 +27,6 @@ public class WRLD {
         return this.polygonWRLDTokenContract.balanceOf(walletAddress).send();
     }
 
-    private
+
+
 }

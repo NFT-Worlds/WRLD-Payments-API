@@ -1,6 +1,8 @@
 package com.nftworlds.wallet;
 
 import com.nftworlds.wallet.config.Config;
+import com.nftworlds.wallet.contracts.nftworlds.Players;
+import com.nftworlds.wallet.contracts.nftworlds.WRLD;
 import com.nftworlds.wallet.listeners.PlayerListener;
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
@@ -17,12 +19,22 @@ public class NFTWorlds extends JavaPlugin {
     private Config nftConfig;
 
     @Getter
-    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
-    
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5); //May or may not need eventually idk yet
+
+    //Contracts:
+    @Getter
+    private Players players;
+    @Getter
+    private WRLD wrld;
+
+
     public void onEnable() {
         plugin = this;
 
         (nftConfig = new Config()).registerConfig();
+
+        players = new Players();
+        wrld = new WRLD();
 
         registerEvents();
 
