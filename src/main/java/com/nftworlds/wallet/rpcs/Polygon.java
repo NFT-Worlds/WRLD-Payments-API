@@ -10,7 +10,6 @@ public class Polygon {
     @Getter private Web3j polygonWeb3j;
 
     public Polygon() {
-        /* TODO Get eth rpc endpoint from yml config */
         this.polygonWeb3j = Web3j.build(new HttpService(NFTWorlds.getInstance().getNftConfig().getPolygonHttpsRpc()));
     }
 }

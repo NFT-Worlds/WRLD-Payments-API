@@ -3,6 +3,8 @@ package com.nftworlds.wallet.contracts.nftworlds;
 import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonPlayers;
 import org.json.simple.JSONObject;
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.Keys;
 
 import java.util.List;
 
@@ -10,7 +12,14 @@ public class Players {
     private PolygonPlayers polygonPlayersContract;
 
     public Players() {
-        this.polygonPlayersContract = PolygonPlayers.load(NFTWorlds.getInstance().getNftConfig().getPolygonPlayerContract());
+        NFTWorlds nftWorlds = NFTWorlds.getInstance();
+        Credentials credentials = null;
+        try {
+            credentials = Credentials.create(Keys.createEcKeyPair()); //We're only reading so this can be anything
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        this.polygonPlayersContract = PolygonPlayers.load(nftWorlds.getNftConfig().getPolygonPlayerContract(), nftWorlds.getPolygonRPC().getPolygonWeb3j(), credentials);
     }
 
     //NOTE: All of these lookups can initially be done async on the join event (When a new instance of NFTPlayer is created). Then they'll be cached.
