@@ -28,6 +28,11 @@ import org.web3j.tx.Contract;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
 
+/**
+ * Contract wrapper for ERC20 NFT Worlds WRLD token on the Ethereum chain.
+ * Auto-generated with web3j version 4.1.1
+ */
+
 @SuppressWarnings("rawtypes")
 public class EthereumWRLDToken extends Contract {
     public static final String BINARY = "Bin file was not provided";
