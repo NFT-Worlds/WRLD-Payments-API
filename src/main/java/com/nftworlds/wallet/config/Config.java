@@ -10,7 +10,6 @@ import java.util.logging.Level;
 
 @Getter
 public class Config {
-
     private String polygonHttpsRpc;
     private String ethereumHttpsRpc;
     private String serverWalletAddress;
@@ -48,12 +47,13 @@ public class Config {
 
     }
 
-    public boolean validateAddress(String address, String name) {
+    private boolean validateAddress(String address, String name) {
         if (!AddressUtil.validAddress(address.toLowerCase()) || !AddressUtil.checksumAddress(address.toLowerCase())) {
             Bukkit.getLogger().log(Level.WARNING, name + " is an invalid format. Check config.yml.");
             Bukkit.getServer().getPluginManager().disablePlugin(NFTWorlds.getInstance());
             return false;
         }
+
         return true;
     }
 
