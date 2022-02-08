@@ -1,4 +1,4 @@
-package com.nftworlds.wallet.contracts.wrapper.common;
+package com.nftworlds.wallet.contracts.wrappers.common;
 
 import io.reactivex.Flowable;
 import java.math.BigInteger;

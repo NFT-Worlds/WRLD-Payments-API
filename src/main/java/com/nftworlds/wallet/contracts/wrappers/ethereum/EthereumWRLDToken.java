@@ -1,4 +1,4 @@
-package com.nftworlds.wallet.contracts.wrapper.ethereum;
+package com.nftworlds.wallet.contracts.wrappers.ethereum;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
