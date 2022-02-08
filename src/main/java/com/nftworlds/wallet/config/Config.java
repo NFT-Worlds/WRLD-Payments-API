@@ -36,15 +36,16 @@ public class Config {
         if (validateAddress(polygonPlayerContract, "Polygon Player Contract")) {
             this.polygonPlayerContract = polygonPlayerContract;
         }
+
         String polygonWrldContract = config.getString("polygon_wrld_contract");
         if (validateAddress(polygonWrldContract, "Polygon WRLD Contract")) {
             this.polygonWrldContract = polygonWrldContract;
         }
+
         String ethereumWrldContract = config.getString("ethereum_wrld_contract");
         if (validateAddress(ethereumWrldContract, "Ethereum WRLD Contract")) {
             this.ethereumWrldContract = ethereumWrldContract;
         }
-
     }
 
     private boolean validateAddress(String address, String name) {
