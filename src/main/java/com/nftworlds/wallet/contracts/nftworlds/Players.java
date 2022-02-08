@@ -21,9 +21,9 @@ public class Players {
         return this.polygonPlayersContract.getPlayerSecondaryWallets(playerUUID).send();
     }
 
-    public JSONObject getPlayerStateData(String playerUUID, String setterAddress) {
+    public JSONObject getPlayerStateData(String playerUUID, String setterWalletAddress) {
         // TODO: returns async? or?
-        String stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterAddress, true).send();
+        String stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterWalletAddress, true).send();
 
         if (stateDataUrl.isEmpty()) {
             // TODO: no state data was set for player by the setter address, return?
