@@ -11,7 +11,6 @@ import java.util.concurrent.Callable;
 import org.web3j.abi.EventEncoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.Event;
 import org.web3j.abi.datatypes.Type;
@@ -30,7 +29,9 @@ import org.web3j.tx.gas.ContractGasProvider;
 
 /**
  * Contract wrapper for NFT Worlds player wallet and state mapping
- * on the Polygon chain.
+ * on the Polygon chain. Players contract version 1.2
+ * Polygon Mainnet contract address: 0x285984c5d7a9D37D1805872F051C6b8aFa7418A4
+ * Polygon Mainnet contract block explorer: https://polygonscan.com/address/0x285984c5d7a9D37D1805872F051C6b8aFa7418A4
  * Auto-generated with web3j version 4.1.1
  */
 
@@ -48,6 +49,8 @@ public class PolygonPlayers extends Contract {
 
     public static final String FUNC_GETPLAYERSTATEDATA = "getPlayerStateData";
 
+    public static final String FUNC_GETPLAYERSTATEDATABATCH = "getPlayerStateDataBatch";
+
     public static final String FUNC_REMOVEPLAYERSECONDARYWALLET = "removePlayerSecondaryWallet";
 
     public static final String FUNC_REMOVEPLAYERSTATEDATA = "removePlayerStateData";
@@ -57,6 +60,8 @@ public class PolygonPlayers extends Contract {
     public static final String FUNC_SETPLAYERSECONDARYWALLET = "setPlayerSecondaryWallet";
 
     public static final String FUNC_SETPLAYERSTATEDATA = "setPlayerStateData";
+
+    public static final String FUNC_SETPLAYERSTATEDATABATCH = "setPlayerStateDataBatch";
 
     public static final Event OWNERSHIPTRANSFERRED_EVENT = new Event("OwnershipTransferred",
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
@@ -152,10 +157,29 @@ public class PolygonPlayers extends Contract {
     public RemoteFunctionCall<String> getPlayerStateData(String _playerUUID, String _setterAddress, Boolean includeGateway) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETPLAYERSTATEDATA,
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_playerUUID),
-                new org.web3j.abi.datatypes.Address(160, _setterAddress),
-                new org.web3j.abi.datatypes.Bool(includeGateway)),
+                        new org.web3j.abi.datatypes.Address(160, _setterAddress),
+                        new org.web3j.abi.datatypes.Bool(includeGateway)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<List> getPlayerStateDataBatch(List<String> _playerUUIDs, String _setterAddress, Boolean includeGateway) {
+        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETPLAYERSTATEDATABATCH,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.Utf8String>(
+                                org.web3j.abi.datatypes.Utf8String.class,
+                                org.web3j.abi.Utils.typeMap(_playerUUIDs, org.web3j.abi.datatypes.Utf8String.class)),
+                        new org.web3j.abi.datatypes.Address(160, _setterAddress),
+                        new org.web3j.abi.datatypes.Bool(includeGateway)),
+                Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<Utf8String>>() {}));
+        return new RemoteFunctionCall<List>(function,
+                new Callable<List>() {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public List call() throws Exception {
+                        List<Type> result = (List<Type>) executeCallSingleValueReturn(function, List.class);
+                        return convertToNative(result);
+                    }
+                });
     }
 
     public RemoteFunctionCall<TransactionReceipt> removePlayerSecondaryWallet(String _playerUUID) {
@@ -178,7 +202,7 @@ public class PolygonPlayers extends Contract {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_SETPLAYERPRIMARYWALLET,
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_playerUUID),
-                new org.web3j.abi.datatypes.DynamicBytes(_signature)),
+                        new org.web3j.abi.datatypes.DynamicBytes(_signature)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -195,7 +219,20 @@ public class PolygonPlayers extends Contract {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_SETPLAYERSTATEDATA,
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_playerUUID),
-                new org.web3j.abi.datatypes.Utf8String(_ipfsHash)),
+                        new org.web3j.abi.datatypes.Utf8String(_ipfsHash)),
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> setPlayerStateDataBatch(List<String> _playerUUIDs, List<String> _ipfsHashes) {
+        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
+                FUNC_SETPLAYERSTATEDATABATCH,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.Utf8String>(
+                                org.web3j.abi.datatypes.Utf8String.class,
+                                org.web3j.abi.Utils.typeMap(_playerUUIDs, org.web3j.abi.datatypes.Utf8String.class)),
+                        new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.Utf8String>(
+                                org.web3j.abi.datatypes.Utf8String.class,
+                                org.web3j.abi.Utils.typeMap(_ipfsHashes, org.web3j.abi.datatypes.Utf8String.class))),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
