@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Holds information for player transaction events
  */
+//TODO: We need a web3j listener that actually fires this event
 public class PlayerTransactEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
