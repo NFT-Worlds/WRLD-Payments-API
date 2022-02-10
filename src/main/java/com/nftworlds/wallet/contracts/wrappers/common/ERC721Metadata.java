@@ -1,7 +1,5 @@
 package com.nftworlds.wallet.contracts.wrappers.common;
 
-import java.math.BigInteger;
-import java.util.Arrays;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
@@ -12,6 +10,9 @@ import org.web3j.protocol.core.RemoteCall;
 import org.web3j.tx.Contract;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.ContractGasProvider;
+
+import java.math.BigInteger;
+import java.util.Arrays;
 
 /**
  * Standard contract wrapper for ERC721 contract interactions on any chain.

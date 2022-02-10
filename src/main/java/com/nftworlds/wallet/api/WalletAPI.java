@@ -1,8 +1,8 @@
 package com.nftworlds.wallet.api;
 
 import com.nftworlds.wallet.objects.NFTPlayer;
+import com.nftworlds.wallet.objects.Network;
 import com.nftworlds.wallet.objects.Wallet;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -75,12 +75,13 @@ public class WalletAPI {
      * Send a request for a WRLD transaction to a player
      * @param uuid
      * @param amount
+     * @param network
      * @param reason
      */
-    public void requestWRLD(UUID uuid, int amount, String reason) {
+    public void requestWRLD(UUID uuid, int amount, Network network, String reason) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
-            player.requestWRLD(amount, reason);
+            player.requestWRLD(amount, network, reason);
         }
     }
 
@@ -88,12 +89,13 @@ public class WalletAPI {
      * Send a request for a WRLD transaction to a player
      * @param player
      * @param amount
+     * @param network
      * @param reason
      */
-    public void requestWRLD(Player player, int amount, String reason) {
+    public void requestWRLD(Player player, int amount, Network network, String reason) {
         NFTPlayer p = NFTPlayer.getByUUID(player.getUniqueId());
         if (p != null) {
-            p.requestWRLD(amount, reason);
+            p.requestWRLD(amount, network, reason);
         }
     }
 
@@ -101,12 +103,13 @@ public class WalletAPI {
      * Send WRLD to a player's primary wallet
      * @param uuid
      * @param amount
+     * @param network
      * @param reason
      */
-    public void sendWRLD(UUID uuid, int amount, String reason) {
+    public void sendWRLD(UUID uuid, int amount, Network network, String reason) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
-            player.sendWRLD(amount, reason);
+            player.sendWRLD(amount, network, reason);
         }
     }
 
@@ -114,12 +117,13 @@ public class WalletAPI {
      * Send WRLD to a player's primary wallet
      * @param player
      * @param amount
+     * @param network
      * @param reason
      */
-    public void sendWRLD(Player player, int amount, String reason) {
+    public void sendWRLD(Player player, int amount, Network network, String reason) {
         NFTPlayer p = NFTPlayer.getByUUID(player.getUniqueId());
         if (p != null) {
-            p.sendWRLD(amount, reason);
+            p.sendWRLD(amount, network, reason);
         }
     }
 

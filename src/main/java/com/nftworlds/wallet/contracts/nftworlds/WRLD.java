@@ -2,10 +2,10 @@ package com.nftworlds.wallet.contracts.nftworlds;
 
 import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.config.Config;
-import com.nftworlds.wallet.rpcs.Ethereum;
 import com.nftworlds.wallet.contracts.wrappers.ethereum.EthereumWRLDToken;
-import com.nftworlds.wallet.rpcs.Polygon;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
+import com.nftworlds.wallet.rpcs.Ethereum;
+import com.nftworlds.wallet.rpcs.Polygon;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
 
@@ -45,7 +45,6 @@ public class WRLD {
         );
     }
 
-    //TODO: These should not return BigInteger
     public BigInteger getEthereumBalance(String walletAddress) throws Exception {
         return this.ethereumWRLDTokenContract.balanceOf(walletAddress).send();
     }

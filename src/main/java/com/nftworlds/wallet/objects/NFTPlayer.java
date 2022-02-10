@@ -3,10 +3,8 @@ package com.nftworlds.wallet.objects;
 import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.contracts.nftworlds.Players;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.SneakyThrows;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +14,7 @@ public class NFTPlayer {
     private static HashSet<NFTPlayer> players = new HashSet<>();
 
     @Getter private UUID uuid;
-    private Wallet wallets[]; //Primary is wallets[0]
+    private Wallet wallets[];
 
     @SneakyThrows
     public NFTPlayer(UUID uuid) {
@@ -55,19 +53,21 @@ public class NFTPlayer {
     /**
      * Send a request for a WRLD transaction to a player
      * @param amount
+     * @param network
      * @param reason
      */
-    public void requestWRLD(double amount, String reason) {
-        getPrimaryWallet().requestWRLD(amount, reason);
+    public void requestWRLD(double amount, Network network, String reason) {
+        getPrimaryWallet().requestWRLD(amount, network, reason);
     }
 
     /**
      * Send WRLD to a player's primary wallet
      * @param amount
+     * @param network
      * @param reason
      */
-    public void sendWRLD(double amount, String reason) {
-        getPrimaryWallet().payWRLD(amount, reason);
+    public void sendWRLD(double amount, Network network, String reason) {
+        getPrimaryWallet().payWRLD(amount, network, reason);
     }
 
     public static NFTPlayer getByUUID(UUID uuid) {
