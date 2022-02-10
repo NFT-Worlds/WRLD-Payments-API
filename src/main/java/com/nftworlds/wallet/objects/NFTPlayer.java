@@ -10,12 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-@Getter @Setter
 public class NFTPlayer {
 
     private static HashSet<NFTPlayer> players = new HashSet<>();
 
-    private UUID uuid;
+    @Getter private UUID uuid;
     private Wallet wallets[]; //Primary is wallets[0]
 
     @SneakyThrows
@@ -58,7 +57,7 @@ public class NFTPlayer {
      * @param reason
      */
     public void requestWRLD(int amount, String reason) {
-
+        getPrimaryWallet().requestWRLD(amount, reason);
     }
 
     /**
@@ -67,7 +66,7 @@ public class NFTPlayer {
      * @param reason
      */
     public void sendWRLD(int amount, String reason) {
-
+        getPrimaryWallet().payWRLD(amount, reason);
     }
 
     public static NFTPlayer getByUUID(UUID uuid) {
