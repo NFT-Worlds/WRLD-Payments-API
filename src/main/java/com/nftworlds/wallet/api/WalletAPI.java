@@ -78,7 +78,7 @@ public class WalletAPI {
      * @param network
      * @param reason
      */
-    public void requestWRLD(UUID uuid, int amount, Network network, String reason) {
+    public void requestWRLD(UUID uuid, double amount, Network network, String reason) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
             player.requestWRLD(amount, network, reason);
@@ -92,7 +92,7 @@ public class WalletAPI {
      * @param network
      * @param reason
      */
-    public void requestWRLD(Player player, int amount, Network network, String reason) {
+    public void requestWRLD(Player player, double amount, Network network, String reason) {
         NFTPlayer p = NFTPlayer.getByUUID(player.getUniqueId());
         if (p != null) {
             p.requestWRLD(amount, network, reason);
@@ -106,7 +106,7 @@ public class WalletAPI {
      * @param network
      * @param reason
      */
-    public void sendWRLD(UUID uuid, int amount, Network network, String reason) {
+    public void sendWRLD(UUID uuid, double amount, Network network, String reason) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
             player.sendWRLD(amount, network, reason);
@@ -120,7 +120,7 @@ public class WalletAPI {
      * @param network
      * @param reason
      */
-    public void sendWRLD(Player player, int amount, Network network, String reason) {
+    public void sendWRLD(Player player, double amount, Network network, String reason) {
         NFTPlayer p = NFTPlayer.getByUUID(player.getUniqueId());
         if (p != null) {
             p.sendWRLD(amount, network, reason);
