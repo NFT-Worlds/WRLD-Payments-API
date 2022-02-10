@@ -6,15 +6,28 @@ import com.nftworlds.wallet.contracts.wrappers.ethereum.EthereumWRLDToken;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
 import com.nftworlds.wallet.rpcs.Ethereum;
 import com.nftworlds.wallet.rpcs.Polygon;
+import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.request.EthFilter;
+import org.web3j.crypto.Hash;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class WRLD {
     private EthereumWRLDToken ethereumWRLDTokenContract;
     private PolygonWRLDToken polygonWRLDTokenContract;
+
+    public static final String TRANSFER_EVENT_TOPIC = Hash.sha3String("Transfer(address,address,uint256)");
+    public static final String TRANSFER_REF_EVENT_TOPIC = Hash.sha3String( "TransferRef(address,address,uint256,uint256)");
 
     public WRLD() {
         NFTWorlds nftWorlds = NFTWorlds.getInstance();
@@ -45,6 +58,32 @@ public class WRLD {
         );
     }
 
+    public void polygonPaymentListener() {
+        EthFilter transferFilter = new EthFilter(
+            DefaultBlockParameterName.EARLIEST,
+            DefaultBlockParameterName.LATEST,
+            this.polygonWRLDTokenContract.getContractAddress()
+        ).addSingleTopic(WRLD.TRANSFER_REF_EVENT_TOPIC);
+
+        NFTWorlds.getInstance().getPolygonRPC().getPolygonWeb3j().ethLogFlowable(transferFilter).subscribe(log -> {
+            List<String> topics = log.getTopics();
+            String eventHash = topics.get(0);
+
+            if (eventHash.equals(TRANSFER_REF_EVENT_TOPIC)) {
+                TypeReference<Address> addressTypeReference = new TypeReference<Address>() {};
+                TypeReference<Uint256> uint256TypeReference = new TypeReference<Uint256>() {};
+
+                Address fromAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(1), addressTypeReference);
+                Address toAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), addressTypeReference);
+                Uint256 amount = (Uint256) FunctionReturnDecoder.decodeIndexedValue(topics.get(3), uint256TypeReference);
+                Uint256 ref = (Uint256) FunctionReturnDecoder.decodeIndexedValue(topics.get(4), uint256TypeReference);
+
+                // Map "fromAddress" back to a player?
+                // Trigger callback or hook of some kind devs can build off of when getting valid incoming payments with ref?
+            }
+        });
+    }
+
     public BigInteger getEthereumBalance(String walletAddress) throws Exception {
         return this.ethereumWRLDTokenContract.balanceOf(walletAddress).send();
     }
@@ -60,7 +99,4 @@ public class WRLD {
     public CompletableFuture<BigInteger> getPolygonBalanceAsync(String walletAddress) throws Exception {
         return this.polygonWRLDTokenContract.balanceOf(walletAddress).sendAsync();
     }
-
-
-
 }

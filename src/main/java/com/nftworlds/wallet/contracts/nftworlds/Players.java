@@ -54,17 +54,21 @@ public class Players {
 
     public JSONObject getPlayerStateData(String playerUUID, String setterWalletAddress) throws Exception {
         String stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterWalletAddress, true).send();
+
         if (stateDataUrl.isEmpty()) {
             return null;
         }
+
         return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(stateDataUrl)).build(), HttpResponse.BodyHandlers.ofString()).body());
     }
 
     public JSONObject getPlayerStateDataAsync(String playerUUID, String setterWalletAddress) throws Exception {
         CompletableFuture<String> stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterWalletAddress, true).sendAsync();
+
         if (stateDataUrl.get().isEmpty()) {
             return null;
         }
+
         return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(stateDataUrl.get())).build(), HttpResponse.BodyHandlers.ofString()).body());
     }
 }
