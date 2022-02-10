@@ -9,9 +9,23 @@ import java.util.UUID;
 
 public class WalletAPI {
 
-    //TODO: I'm gonna redo this entire api so it's cleaner
+    /**
+     * Get an NFT Player
+     * @param uuid
+     * @return NFT Player
+     */
+    public NFTPlayer getNFTPlayer(UUID uuid) {
+        return NFTPlayer.getByUUID(uuid);
+    }
 
-
+    /**
+     * Get an NFT Player
+     * @param player
+     * @return NFT Player
+     */
+    public NFTPlayer getNFTPlayer(Player player) {
+        return NFTPlayer.getByUUID(player.getUniqueId());
+    }
 
     /**
      * Get a player's wallet
@@ -61,11 +75,25 @@ public class WalletAPI {
      * Send a request for a WRLD transaction to a player
      * @param uuid
      * @param amount
+     * @param reason
      */
     public void requestWRLD(UUID uuid, int amount, String reason) {
-        Player p = Bukkit.getPlayer(uuid);
+        NFTPlayer player = NFTPlayer.getByUUID(uuid);
+        if (player != null) {
+            player.requestWRLD(amount, reason);
+        }
+    }
+
+    /**
+     * Send a request for a WRLD transaction to a player
+     * @param player
+     * @param amount
+     * @param reason
+     */
+    public void requestWRLD(Player player, int amount, String reason) {
+        NFTPlayer p = NFTPlayer.getByUUID(player.getUniqueId());
         if (p != null) {
-            //TODO: Send QR code to player on map
+            p.requestWRLD(amount, reason);
         }
     }
 
@@ -73,15 +101,26 @@ public class WalletAPI {
      * Send WRLD to a player's primary wallet
      * @param uuid
      * @param amount
+     * @param reason
      */
     public void sendWRLD(UUID uuid, int amount, String reason) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
-            Wallet wallet = player.getPrimaryWallet();
-            //TODO: Send WRLD to wallet
+            player.sendWRLD(amount, reason);
         }
     }
 
-
+    /**
+     * Send WRLD to a player's primary wallet
+     * @param player
+     * @param amount
+     * @param reason
+     */
+    public void sendWRLD(Player player, int amount, String reason) {
+        NFTPlayer p = NFTPlayer.getByUUID(player.getUniqueId());
+        if (p != null) {
+            p.sendWRLD(amount, reason);
+        }
+    }
 
 }

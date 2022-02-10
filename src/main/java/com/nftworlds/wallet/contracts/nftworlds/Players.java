@@ -3,10 +3,14 @@ package com.nftworlds.wallet.contracts.nftworlds;
 import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonPlayers;
 import com.nftworlds.wallet.rpcs.Polygon;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 
 public class Players {
@@ -24,10 +28,10 @@ public class Players {
         }
 
         this.polygonPlayersContract = PolygonPlayers.load(
-            nftWorlds.getNftConfig().getPolygonPlayerContract(),
-            polygonRPC.getPolygonWeb3j(),
-            credentials,
-            polygonRPC.getGasProvider()
+                nftWorlds.getNftConfig().getPolygonPlayerContract(),
+                polygonRPC.getPolygonWeb3j(),
+                credentials,
+                polygonRPC.getGasProvider()
         );
     }
 
@@ -48,13 +52,10 @@ public class Players {
         String stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterWalletAddress, true).send();
 
         if (stateDataUrl.isEmpty()) {
-            // TODO: no state data was set for player by the setter address, return?
+            return null;
         }
 
-        /*
-            TODO:
-            Do HTTP request for JSON string returned from retrieving stateDataUrl contents.
-            Convert JSON string to JSON Object and return.
-         */
+        JSONObject json = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(stateDataUrl)).build(), HttpResponse.BodyHandlers.ofString()).body());
+        return json;
     }
 }

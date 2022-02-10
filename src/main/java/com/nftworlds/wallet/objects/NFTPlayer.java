@@ -36,8 +36,38 @@ public class NFTPlayer {
         players.add(this);
     }
 
+    /**
+     * Get a player's wallet(s)
+     * @return player's wallet(s)
+     */
+    public Wallet[] getWallets() {
+        return wallets;
+    }
+
+    /**
+     * Get a player's primary wallet
+     * @return player's wallet
+     */
     public Wallet getPrimaryWallet() {
         return wallets[0];
+    }
+
+    /**
+     * Send a request for a WRLD transaction to a player
+     * @param amount
+     * @param reason
+     */
+    public void requestWRLD(int amount, String reason) {
+
+    }
+
+    /**
+     * Send WRLD to a player's primary wallet
+     * @param amount
+     * @param reason
+     */
+    public void sendWRLD(int amount, String reason) {
+
     }
 
     public static NFTPlayer getByUUID(UUID uuid) {
