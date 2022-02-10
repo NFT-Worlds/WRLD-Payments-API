@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -56,7 +57,7 @@ public class NFTPlayer {
      * @param amount
      * @param reason
      */
-    public void requestWRLD(int amount, String reason) {
+    public void requestWRLD(double amount, String reason) {
         getPrimaryWallet().requestWRLD(amount, reason);
     }
 
@@ -65,7 +66,7 @@ public class NFTPlayer {
      * @param amount
      * @param reason
      */
-    public void sendWRLD(int amount, String reason) {
+    public void sendWRLD(double amount, String reason) {
         getPrimaryWallet().payWRLD(amount, reason);
     }
 

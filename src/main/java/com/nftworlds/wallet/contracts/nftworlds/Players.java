@@ -12,6 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class Players {
     private PolygonPlayers polygonPlayersContract;
@@ -35,27 +36,35 @@ public class Players {
         );
     }
 
-    //NOTE: All of these lookups can initially be done async on the join event (When a new instance of NFTPlayer is created). Then they'll be cached.
-
     public String getPlayerPrimaryWallet(String playerUUID) throws Exception {
-        // TODO: returns async? or?
         return this.polygonPlayersContract.getPlayerPrimaryWallet(playerUUID).send();
     }
 
+    public CompletableFuture<String> getPlayerPrimaryWalletAsync(String playerUUID) throws Exception {
+        return this.polygonPlayersContract.getPlayerPrimaryWallet(playerUUID).sendAsync();
+    }
+
     public List<String> getPlayerSecondaryWallets(String playerUUID) throws Exception {
-        // TODO: returns async? or?
         return this.polygonPlayersContract.getPlayerSecondaryWallets(playerUUID).send();
     }
 
-    public JSONObject getPlayerStateData(String playerUUID, String setterWalletAddress) throws Exception {
-        // TODO: returns async? or?
-        String stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterWalletAddress, true).send();
+    public CompletableFuture<List> getPlayerSecondaryWalletsAsync(String playerUUID) throws Exception {
+        return this.polygonPlayersContract.getPlayerSecondaryWallets(playerUUID).sendAsync();
+    }
 
+    public JSONObject getPlayerStateData(String playerUUID, String setterWalletAddress) throws Exception {
+        String stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterWalletAddress, true).send();
         if (stateDataUrl.isEmpty()) {
             return null;
         }
+        return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(stateDataUrl)).build(), HttpResponse.BodyHandlers.ofString()).body());
+    }
 
-        JSONObject json = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(stateDataUrl)).build(), HttpResponse.BodyHandlers.ofString()).body());
-        return json;
+    public JSONObject getPlayerStateDataAsync(String playerUUID, String setterWalletAddress) throws Exception {
+        CompletableFuture<String> stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterWalletAddress, true).sendAsync();
+        if (stateDataUrl.get().isEmpty()) {
+            return null;
+        }
+        return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(stateDataUrl.get())).build(), HttpResponse.BodyHandlers.ofString()).body());
     }
 }

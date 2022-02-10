@@ -10,6 +10,7 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Keys;
 
 import java.math.BigInteger;
+import java.util.concurrent.CompletableFuture;
 
 public class WRLD {
     private EthereumWRLDToken ethereumWRLDTokenContract;
@@ -44,14 +45,21 @@ public class WRLD {
         );
     }
 
-    public BigInteger ethereum_getBalance(String walletAddress) throws Exception {
-        // TODO: .send returns async and not a biginteger?
+    //TODO: These should not return BigInteger
+    public BigInteger getEthereumBalance(String walletAddress) throws Exception {
         return this.ethereumWRLDTokenContract.balanceOf(walletAddress).send();
     }
 
-    public BigInteger polygon_getBalance(String walletAddress) throws Exception {
-        // TODO: .send returns async and not a biginteger?
+    public CompletableFuture<BigInteger> getEthereumBalanceAsync(String walletAddress) throws Exception {
+        return this.ethereumWRLDTokenContract.balanceOf(walletAddress).sendAsync();
+    }
+
+    public BigInteger getPolygonBalance(String walletAddress) throws Exception {
         return this.polygonWRLDTokenContract.balanceOf(walletAddress).send();
+    }
+
+    public CompletableFuture<BigInteger> getPolygonBalanceAsync(String walletAddress) throws Exception {
+        return this.polygonWRLDTokenContract.balanceOf(walletAddress).sendAsync();
     }
 
 
