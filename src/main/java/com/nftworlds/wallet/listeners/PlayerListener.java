@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener {
 
@@ -18,6 +19,10 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(AsyncPlayerPreLoginEvent event) {
         new NFTPlayer(event.getUniqueId());
+    }
+
+    public void onQuit(PlayerQuitEvent event) {
+        NFTPlayer.remove(event.getPlayer().getUniqueId());
     }
 
 }

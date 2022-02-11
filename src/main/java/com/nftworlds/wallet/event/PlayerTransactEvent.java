@@ -1,10 +1,10 @@
 package com.nftworlds.wallet.event;
 
-import com.nftworlds.wallet.objects.Wallet;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
+import org.web3j.abi.datatypes.generated.Uint256;
 
 /**
  * Holds information for player transaction events
@@ -13,24 +13,13 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerTransactEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private Wallet wallet;
-    private int amount;
-    private String reason;
+    private double amount;
+    private Uint256 refID;
 
-    public PlayerTransactEvent(@NotNull final Player player, @NotNull final Wallet wallet, @NotNull final int amount, @NotNull final String reason) {
+    public PlayerTransactEvent(@NotNull final Player player, @NotNull final double amount, @NotNull final Uint256 refID) {
         super(player);
-        this.wallet = wallet;
         this.amount = amount;
-    }
-
-    /**
-     * Gets the wallet used during the transaction
-     *
-     * @return Player's wallet
-     */
-    @NotNull
-    public Wallet getWallet() {
-        return wallet;
+        this.refID = refID;
     }
 
     /**
@@ -39,7 +28,7 @@ public class PlayerTransactEvent extends PlayerEvent {
      * @return Amount of $WRLD
      */
     @NotNull
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
@@ -49,18 +38,18 @@ public class PlayerTransactEvent extends PlayerEvent {
      * @return Amount of $WRLD
      */
     @NotNull
-    public int getWRLD() {
+    public double getWRLD() {
         return amount;
     }
 
     /**
-     * Gets the reason for the transaction
+     * Gets the refid for the transaction
      *
-     * @return Reason
+     * @return Payment reference ID
      */
     @NotNull
-    public String getReason() {
-        return reason;
+    public Uint256 getRefID() {
+        return refID;
     }
 
     @NotNull

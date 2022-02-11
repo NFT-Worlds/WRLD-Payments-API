@@ -4,23 +4,27 @@ import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.config.Config;
 import com.nftworlds.wallet.contracts.wrappers.ethereum.EthereumWRLDToken;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
+import com.nftworlds.wallet.event.PlayerTransactEvent;
+import com.nftworlds.wallet.objects.Network;
+import com.nftworlds.wallet.objects.PaymentRequest;
 import com.nftworlds.wallet.rpcs.Ethereum;
 import com.nftworlds.wallet.rpcs.Polygon;
+import org.bukkit.Bukkit;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.Hash;
 import org.web3j.crypto.Keys;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.EthFilter;
-import org.web3j.crypto.Hash;
+import org.web3j.utils.Convert;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 public class WRLD {
     private EthereumWRLDToken ethereumWRLDTokenContract;
@@ -56,6 +60,8 @@ public class WRLD {
             credentials,
             polygonRPC.getGasProvider()
         );
+
+        polygonPaymentListener();
     }
 
     public void polygonPaymentListener() {
@@ -78,6 +84,17 @@ public class WRLD {
                 Uint256 amount = (Uint256) FunctionReturnDecoder.decodeIndexedValue(topics.get(3), uint256TypeReference);
                 Uint256 ref = (Uint256) FunctionReturnDecoder.decodeIndexedValue(topics.get(4), uint256TypeReference);
 
+                PaymentRequest paymentRequest = PaymentRequest.getPayment(ref, Network.POLYGON);
+                double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
+                if (paymentRequest.getAmount() == received) {
+                    PaymentRequest.getPaymentRequests().remove(paymentRequest);
+                    if (paymentRequest != null) {
+                        new PlayerTransactEvent(Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()), received, ref) ; //TODO: Test if works for offline players
+                    }
+                } else {
+                    Bukkit.getLogger().log(Level.WARNING,
+                            "Payment with REFID " + ref.getValue().toString() +" was receive but amount was " + received + ". Expected " + paymentRequest.getAmount());
+                }
                 // Map "fromAddress" back to a player?
                 // Trigger callback or hook of some kind devs can build off of when getting valid incoming payments with ref?
             }
