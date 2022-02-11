@@ -1,10 +1,11 @@
 package com.nftworlds.wallet.config;
 
 import com.nftworlds.wallet.NFTWorlds;
-import com.nftworlds.wallet.util.AddressUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.web3j.crypto.Keys;
+import org.web3j.crypto.WalletUtils;
 
 import java.util.logging.Level;
 
@@ -49,7 +50,7 @@ public class Config {
     }
 
     private boolean validateAddress(String address, String name) {
-        if (!AddressUtil.validAddress(address.toLowerCase()) || !AddressUtil.checksumAddress(address.toLowerCase())) {
+        if (!WalletUtils.isValidAddress(address) || !Keys.toChecksumAddress(address).equals(address)) {
             Bukkit.getLogger().log(Level.WARNING, name + " is an invalid format. Check config.yml.");
             Bukkit.getServer().getPluginManager().disablePlugin(NFTWorlds.getInstance());
             return false;
