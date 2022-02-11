@@ -50,7 +50,7 @@ public class Config {
     }
 
     private boolean validateAddress(String address, String name) {
-        if (!WalletUtils.isValidAddress(address) || !Keys.toChecksumAddress(address).equals(address)) {
+        if (!WalletUtils.isValidAddress(address) || !Keys.toChecksumAddress(address).equalsIgnoreCase(address)) {
             Bukkit.getLogger().log(Level.WARNING, name + " is an invalid format. Check config.yml.");
             Bukkit.getServer().getPluginManager().disablePlugin(NFTWorlds.getInstance());
             return false;
