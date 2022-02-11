@@ -14,11 +14,13 @@ public class PlayerTransactEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private double amount;
+    private String reason;
     private Uint256 refID;
 
-    public PlayerTransactEvent(@NotNull final Player player, @NotNull final double amount, @NotNull final Uint256 refID) {
+    public PlayerTransactEvent(@NotNull final Player player, @NotNull final double amount, @NotNull final String reason, @NotNull final Uint256 refID) {
         super(player);
         this.amount = amount;
+        this.reason = reason;
         this.refID = refID;
     }
 
@@ -40,6 +42,16 @@ public class PlayerTransactEvent extends PlayerEvent {
     @NotNull
     public double getWRLD() {
         return amount;
+    }
+
+    /**
+     * Gets the reason for the transaction
+     *
+     * @return Transaction Reason
+     */
+    @NotNull
+    public String getReason() {
+        return reason;
     }
 
     /**

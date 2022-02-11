@@ -16,12 +16,14 @@ public class PaymentRequest {
     private double amount;
     private Uint256 refid;
     private Network network;
+    private String reason;
 
-    public PaymentRequest(UUID associatedPlayer, double amount, Uint256 refid, Network network) {
+    public PaymentRequest(UUID associatedPlayer, double amount, Uint256 refid, Network network, String reason) {
         this.associatedPlayer = associatedPlayer;
         this.amount = amount;
         this.refid = refid;
         this.network = network;
+        this.reason = reason;
         paymentRequests.add(this);
     }
 

@@ -89,7 +89,7 @@ public class WRLD {
                 if (paymentRequest.getAmount() == received) {
                     PaymentRequest.getPaymentRequests().remove(paymentRequest);
                     if (paymentRequest != null) {
-                        new PlayerTransactEvent(Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()), received, ref) ; //TODO: Test if works for offline players
+                        new PlayerTransactEvent(Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()), received, paymentRequest.getReason(), ref) ; //TODO: Test if works for offline players
                     }
                 } else {
                     Bukkit.getLogger().log(Level.WARNING,
