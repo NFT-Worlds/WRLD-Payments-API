@@ -78,8 +78,10 @@ public class WRLD {
 
             if (eventHash.equals(TRANSFER_REF_EVENT_TOPIC)) {
                 List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonWRLDToken.TRANSFERREF_EVENT.getNonIndexedParameters());
-                TypeReference<Address> addressTypeReference = new TypeReference<Address>() {};
-                TypeReference<Uint256> uint256TypeReference = new TypeReference<Uint256>() {};
+                TypeReference<Address> addressTypeReference = new TypeReference<Address>() {
+                };
+                TypeReference<Uint256> uint256TypeReference = new TypeReference<Uint256>() {
+                };
 
                 Address fromAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(1), addressTypeReference);
                 Address toAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), addressTypeReference);
@@ -87,18 +89,20 @@ public class WRLD {
                 Uint256 ref = (Uint256) data.get(1);
 
                 PaymentRequest paymentRequest = PaymentRequest.getPayment(ref, Network.POLYGON);
-                double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
-                if (paymentRequest.getAmount() == received) {
-                    PaymentRequest.getPaymentRequests().remove(paymentRequest);
-                    if (paymentRequest != null) {
-                        new PlayerTransactEvent(Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()), received, paymentRequest.getReason(), ref) ; //TODO: Test if works for offline players
+                if (paymentRequest != null) {
+                    double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
+                    if (paymentRequest.getAmount() == received) {
+                        PaymentRequest.getPaymentRequests().remove(paymentRequest);
+                        if (paymentRequest != null) {
+                            new PlayerTransactEvent(Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()), received, paymentRequest.getReason(), ref); //TODO: Test if works for offline players
+                        }
+                    } else {
+                        Bukkit.getLogger().log(Level.WARNING,
+                                "Payment with REFID " + ref.getValue().toString() + " was receive but amount was " + received + ". Expected " + paymentRequest.getAmount());
                     }
-                } else {
-                    Bukkit.getLogger().log(Level.WARNING,
-                            "Payment with REFID " + ref.getValue().toString() +" was receive but amount was " + received + ". Expected " + paymentRequest.getAmount());
+                    // Map "fromAddress" back to a player?
+                    // Trigger callback or hook of some kind devs can build off of when getting valid incoming payments with ref?
                 }
-                // Map "fromAddress" back to a player?
-                // Trigger callback or hook of some kind devs can build off of when getting valid incoming payments with ref?
             }
         },
         error -> {
