@@ -14,6 +14,7 @@ import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.abi.datatypes.Type;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Hash;
 import org.web3j.crypto.Keys;
@@ -76,13 +77,14 @@ public class WRLD {
             String eventHash = topics.get(0);
 
             if (eventHash.equals(TRANSFER_REF_EVENT_TOPIC)) {
+                List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonWRLDToken.TRANSFERREF_EVENT.getNonIndexedParameters());
                 TypeReference<Address> addressTypeReference = new TypeReference<Address>() {};
                 TypeReference<Uint256> uint256TypeReference = new TypeReference<Uint256>() {};
 
                 Address fromAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(1), addressTypeReference);
                 Address toAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), addressTypeReference);
-                Uint256 amount = (Uint256) FunctionReturnDecoder.decodeIndexedValue(topics.get(3), uint256TypeReference);
-                Uint256 ref = (Uint256) FunctionReturnDecoder.decodeIndexedValue(topics.get(4), uint256TypeReference);
+                Uint256 amount = (Uint256) data.get(0);
+                Uint256 ref = (Uint256) data.get(1);
 
                 PaymentRequest paymentRequest = PaymentRequest.getPayment(ref, Network.POLYGON);
                 double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
