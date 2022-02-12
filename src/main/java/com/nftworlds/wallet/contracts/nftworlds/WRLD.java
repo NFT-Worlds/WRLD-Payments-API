@@ -77,6 +77,7 @@ public class WRLD {
             String eventHash = topics.get(0);
 
             if (eventHash.equals(TRANSFER_REF_EVENT_TOPIC)) {
+                Bukkit.getLogger().log(Level.INFO, "Transfer initiated");
                 List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonWRLDToken.TRANSFERREF_EVENT.getNonIndexedParameters());
                 TypeReference<Address> addressTypeReference = new TypeReference<Address>() {
                 };
@@ -88,12 +89,22 @@ public class WRLD {
                 Uint256 amount = (Uint256) data.get(0);
                 Uint256 ref = (Uint256) data.get(1);
 
+                Bukkit.getLogger().log(Level.INFO, "Transfer of " + amount.getValue().toString() + " $WRLD with refid " + ref.getValue().toString());
+
                 PaymentRequest paymentRequest = PaymentRequest.getPayment(ref, Network.POLYGON);
                 if (paymentRequest != null) {
+
+                    Bukkit.getLogger().log(Level.INFO, "Transfer found in payment requests");
+
                     double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
+                    Bukkit.getLogger().log(Level.INFO, "Requested: " + paymentRequest.getAmount() + ", Received: " + received);
                     if (paymentRequest.getAmount() == received) {
+
+                        Bukkit.getLogger().log(Level.INFO, "Payment amount verified");
+
                         PaymentRequest.getPaymentRequests().remove(paymentRequest);
                         if (paymentRequest != null) {
+                            Bukkit.getLogger().log(Level.INFO, "Event fired");
                             new PlayerTransactEvent(Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()), received, paymentRequest.getReason(), ref); //TODO: Test if works for offline players
                         }
                     } else {
