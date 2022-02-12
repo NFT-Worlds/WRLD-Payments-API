@@ -90,7 +90,7 @@ public class WRLD {
                 double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
 
                 Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD with refid " + ref.getValue().toString() + " from " + fromAddress.toString() + " to " + toAddress.toString());
-
+                /*
                 for (NFTPlayer nftPlayer : NFTPlayer.getPlayers()) {
                     for (Wallet wallet : nftPlayer.getWallets()) {
                         if (wallet.getAddress().equalsIgnoreCase(fromAddress.toString())) {
@@ -101,6 +101,7 @@ public class WRLD {
                         }
                     }
                 }
+                 */
 
                 PaymentRequest paymentRequest = PaymentRequest.getPayment(ref, Network.POLYGON);
                 if (paymentRequest != null) {
