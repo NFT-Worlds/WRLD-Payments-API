@@ -2,6 +2,7 @@ package com.nftworlds.wallet.objects;
 
 import com.nftworlds.wallet.NFTWorlds;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.utils.Convert;
@@ -51,7 +52,7 @@ public class Wallet {
                 Uint256 refID = new Uint256(new BigInteger(256, new Random())); //NOTE: This generates a random Uint256 to use as a reference. Don't know if we want to change this or not.
                 new PaymentRequest(associatedPlayer, amount, refID, network, reason);
                 String paymentLink = "https://nftworlds.com/pay/?to="+nftWorlds.getNftConfig().getServerWalletAddress()+"&amount="+amount+"&ref="+refID.getValue().toString();
-                player.sendMessage("Pay here: " + paymentLink); //NOTE: Yeah this will look nicer and we'll do QR codes as well
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: &a" + paymentLink)); //NOTE: Yeah this will look nicer and we'll do QR codes as well
             }
         }
     }

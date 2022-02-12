@@ -67,8 +67,8 @@ public class WRLD {
 
     public void polygonPaymentListener() {
         EthFilter transferFilter = new EthFilter(
-            DefaultBlockParameterName.EARLIEST,
             DefaultBlockParameterName.LATEST,
+            DefaultBlockParameterName.PENDING,
             this.polygonWRLDTokenContract.getContractAddress()
         ).addSingleTopic(WRLD.TRANSFER_REF_EVENT_TOPIC);
 
