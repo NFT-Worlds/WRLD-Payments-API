@@ -105,7 +105,12 @@ public class WRLD {
                         PaymentRequest.getPaymentRequests().remove(paymentRequest);
                         if (paymentRequest != null) {
                             Bukkit.getLogger().log(Level.INFO, "Event fired");
-                            new PlayerTransactEvent(Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()), received, paymentRequest.getReason(), ref).callEvent(); //TODO: Test if works for offline players
+                            Bukkit.getScheduler().runTask(NFTWorlds.getInstance(), new Runnable() {
+                                @Override
+                                public void run() {
+                                    new PlayerTransactEvent(Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()), received, paymentRequest.getReason(), ref).callEvent(); //TODO: Test if works for offline players
+                                }
+                            });
                         }
                     } else {
                         Bukkit.getLogger().log(Level.WARNING,
