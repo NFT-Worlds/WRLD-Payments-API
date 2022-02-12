@@ -1,6 +1,8 @@
 package com.nftworlds.wallet.objects;
 
 import com.nftworlds.wallet.NFTWorlds;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -14,26 +16,39 @@ import java.util.UUID;
 
 public class Wallet {
 
-    private UUID associatedPlayer;
-    private String address;
+    @Getter private UUID associatedPlayer;
+    @Getter private String address;
+    @Getter @Setter private double polygonWRLDBalance;
+    @Getter @Setter private double ethereumWRLDBalance;
 
     public Wallet(UUID associatedPlayer, String address) {
         this.associatedPlayer = associatedPlayer;
         this.address = address;
+
+        //Get balance initially
+        double polygonBalance = 0;
+        double ethereumBalance = 0;
+        try {
+            BigInteger bigIntegerPoly = NFTWorlds.getInstance().getWrld().getPolygonBalance(address);
+            BigInteger bigIntegerEther = NFTWorlds.getInstance().getWrld().getEthereumBalance(address);
+            polygonBalance = Convert.fromWei(bigIntegerPoly.toString(), Convert.Unit.ETHER).doubleValue();
+            ethereumBalance = Convert.fromWei(bigIntegerEther.toString(), Convert.Unit.ETHER).doubleValue();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        this.polygonWRLDBalance = polygonBalance;
+        this.ethereumWRLDBalance = ethereumBalance;
+
     }
     /**
      * Get the wallet's WRLD balance
      */
     public double getWRLDBalance(Network network) {
-        //TODO: We'll probably want an async scheduler constantly updating player balances because calling this consistently on the main thread would cause lag
-        double balance = 0;
-        try {
-            BigInteger bigInteger = network == Network.ETHEREUM ? NFTWorlds.getInstance().getWrld().getEthereumBalance(address) : NFTWorlds.getInstance().getWrld().getPolygonBalance(address);
-            balance = Convert.fromWei(bigInteger.toString(), Convert.Unit.ETHER).doubleValue();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (network == Network.POLYGON) {
+            return polygonWRLDBalance;
+        } else {
+            return ethereumWRLDBalance;
         }
-        return balance;
     }
 
     /**

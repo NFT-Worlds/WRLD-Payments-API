@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public class NFTPlayer {
 
+    @Getter
     private static HashSet<NFTPlayer> players = new HashSet<>();
 
     @Getter
