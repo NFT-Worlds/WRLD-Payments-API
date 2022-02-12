@@ -48,9 +48,9 @@ public class Wallet {
         if (nftPlayer != null) {
             Player player = Bukkit.getPlayer(nftPlayer.getUuid());
             if (player != null) {
-                Uint256 refID = new Uint256(new Random().nextLong()); //NOTE: This generates a random Uint256 to use as a reference. Don't know if we want to change this or not.
+                Uint256 refID = new Uint256(new BigInteger(256, new Random())); //NOTE: This generates a random Uint256 to use as a reference. Don't know if we want to change this or not.
                 new PaymentRequest(associatedPlayer, amount, refID, network, reason);
-                String paymentLink = "https://nftworlds.com/pay/?to="+nftWorlds.getNftConfig().getServerWalletAddress()+"&amount="+amount+"&ref="+refID;
+                String paymentLink = "https://nftworlds.com/pay/?to="+nftWorlds.getNftConfig().getServerWalletAddress()+"&amount="+amount+"&ref="+refID.getValue().toString();
                 player.sendMessage("Pay here: " + paymentLink); //NOTE: Yeah this will look nicer and we'll do QR codes as well
             }
         }

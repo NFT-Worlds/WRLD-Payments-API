@@ -4,9 +4,12 @@ import com.nftworlds.wallet.config.Config;
 import com.nftworlds.wallet.contracts.nftworlds.Players;
 import com.nftworlds.wallet.contracts.nftworlds.WRLD;
 import com.nftworlds.wallet.listeners.PlayerListener;
+import com.nftworlds.wallet.objects.NFTPlayer;
 import com.nftworlds.wallet.rpcs.Ethereum;
 import com.nftworlds.wallet.rpcs.Polygon;
 import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -37,6 +40,10 @@ public class NFTWorlds extends JavaPlugin {
 
         players = new Players();
         wrld = new WRLD();
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            new NFTPlayer(p.getUniqueId());
+        }
 
         registerEvents();
 
