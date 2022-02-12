@@ -13,7 +13,9 @@
 
     <description>NFT Worlds Wallet API</description>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>16</java.version>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <url>nftworlds.com</url>
@@ -26,8 +28,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -47,7 +49,11 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
+                                        <exclude>module-info.class</exclude>
+                                        <exclude>META-INF/LICENSE</exclude>
+                                        <exclude>META-INF/NOTICE</exclude>
                                         <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.MF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
                                     </excludes>
@@ -94,13 +100,11 @@
             <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
             <version>5.0.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20211205</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

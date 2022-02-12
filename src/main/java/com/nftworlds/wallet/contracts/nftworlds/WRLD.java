@@ -98,6 +98,9 @@ public class WRLD {
                 // Map "fromAddress" back to a player?
                 // Trigger callback or hook of some kind devs can build off of when getting valid incoming payments with ref?
             }
+        },
+        error -> {
+            error.printStackTrace();
         });
     }
 
