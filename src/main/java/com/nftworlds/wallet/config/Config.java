@@ -33,17 +33,17 @@ public class Config {
             this.serverWalletAddress = address;
         }
 
-        String polygonPlayerContract = config.getString("polygon_player_contract");
+        String polygonPlayerContract = config.getString("contracts.polygon_player_contract");
         if (validateAddress(polygonPlayerContract, "Polygon Player Contract")) {
             this.polygonPlayerContract = polygonPlayerContract;
         }
 
-        String polygonWrldContract = config.getString("polygon_wrld_contract");
+        String polygonWrldContract = config.getString("contracts.polygon_wrld_contract");
         if (validateAddress(polygonWrldContract, "Polygon WRLD Contract")) {
             this.polygonWrldContract = polygonWrldContract;
         }
 
-        String ethereumWrldContract = config.getString("ethereum_wrld_contract");
+        String ethereumWrldContract = config.getString("contracts.ethereum_wrld_contract");
         if (validateAddress(ethereumWrldContract, "Ethereum WRLD Contract")) {
             this.ethereumWrldContract = ethereumWrldContract;
         }
