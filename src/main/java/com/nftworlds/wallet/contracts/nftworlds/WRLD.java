@@ -72,7 +72,7 @@ public class WRLD {
             DefaultBlockParameterName.LATEST,
             DefaultBlockParameterName.PENDING,
             this.polygonWRLDTokenContract.getContractAddress()
-        ).addSingleTopic(WRLD.TRANSFER_REF_EVENT_TOPIC);
+        ).addSingleTopic(WRLD.TRANSFER_REF_EVENT_TOPIC).addSingleTopic(WRLD.TRANSFER_EVENT_TOPIC);
 
         NFTWorlds.getInstance().getPolygonRPC().getPolygonWeb3j().ethLogFlowable(transferFilter).subscribe(log -> {
             List<String> topics = log.getTopics();
@@ -81,10 +81,7 @@ public class WRLD {
             if (eventHash.equals(TRANSFER_REF_EVENT_TOPIC)) {
                 Bukkit.getLogger().log(Level.INFO, "Transfer initiated");
                 List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonWRLDToken.TRANSFERREF_EVENT.getNonIndexedParameters());
-                TypeReference<Address> addressTypeReference = new TypeReference<Address>() {
-                };
-                TypeReference<Uint256> uint256TypeReference = new TypeReference<Uint256>() {
-                };
+                TypeReference<Address> addressTypeReference = new TypeReference<Address>() {};
 
                 Address fromAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(1), addressTypeReference);
                 Address toAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), addressTypeReference);
