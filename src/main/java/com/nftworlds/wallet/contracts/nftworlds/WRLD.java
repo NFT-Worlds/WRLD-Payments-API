@@ -72,7 +72,7 @@ public class WRLD {
             DefaultBlockParameterName.LATEST,
             DefaultBlockParameterName.PENDING,
             this.polygonWRLDTokenContract.getContractAddress()
-        ).addSingleTopic(WRLD.TRANSFER_REF_EVENT_TOPIC).addSingleTopic(WRLD.TRANSFER_EVENT_TOPIC);
+        ).addOptionalTopics(WRLD.TRANSFER_REF_EVENT_TOPIC, WRLD.TRANSFER_EVENT_TOPIC);
 
         NFTWorlds.getInstance().getPolygonRPC().getPolygonWeb3j().ethLogFlowable(transferFilter).subscribe(log -> {
             List<String> topics = log.getTopics();
@@ -128,6 +128,28 @@ public class WRLD {
                     }
                     // Map "fromAddress" back to a player?
                     // Trigger callback or hook of some kind devs can build off of when getting valid incoming payments with ref?
+                }
+            } else if (eventHash.equals(TRANSFER_EVENT_TOPIC)) {
+                Bukkit.getLogger().log(Level.INFO, "Payment detected");
+                List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonWRLDToken.TRANSFER_EVENT.getNonIndexedParameters());
+                TypeReference<Address> addressTypeReference = new TypeReference<Address>() {};
+
+                Address fromAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(1), addressTypeReference);
+                Address toAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), addressTypeReference);
+                Uint256 amount = (Uint256) data.get(0);
+                double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
+
+                Bukkit.getLogger().log(Level.INFO, "Transfer of " + amount.getValue().toString() + " $WRLD. Updating balances.");
+
+                for (NFTPlayer nftPlayer : NFTPlayer.getPlayers()) {
+                    for (Wallet wallet : nftPlayer.getWallets()) {
+                        if (wallet.getAddress().equalsIgnoreCase(fromAddress.toString())) {
+                            wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() - received);
+                        }
+                        if (wallet.getAddress().equalsIgnoreCase(toAddress.toString())) {
+                            wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() + received);
+                        }
+                    }
                 }
             }
         },
