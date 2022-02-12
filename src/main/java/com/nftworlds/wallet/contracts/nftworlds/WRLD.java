@@ -142,15 +142,20 @@ public class WRLD {
 
                 Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD from " + fromAddress.toString() + " to " + toAddress.toString() + " . Updating balances.");
 
+                boolean found = false;
                 for (NFTPlayer nftPlayer : NFTPlayer.getPlayers()) {
                     for (Wallet wallet : nftPlayer.getWallets()) {
                         if (wallet.getAddress().equalsIgnoreCase(fromAddress.toString())) {
                             wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() - received);
+                            found = true;
                         }
                         if (wallet.getAddress().equalsIgnoreCase(toAddress.toString())) {
                             wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() + received);
+                            found = true;
                         }
+                        if (found) break;
                     }
+                    if (found) break;
                 }
             }
         },
