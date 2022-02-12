@@ -105,7 +105,7 @@ public class WRLD {
                         PaymentRequest.getPaymentRequests().remove(paymentRequest);
                         if (paymentRequest != null) {
                             Bukkit.getLogger().log(Level.INFO, "Event fired");
-                            new PlayerTransactEvent(Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()), received, paymentRequest.getReason(), ref); //TODO: Test if works for offline players
+                            new PlayerTransactEvent(Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()), received, paymentRequest.getReason(), ref).callEvent(); //TODO: Test if works for offline players
                         }
                     } else {
                         Bukkit.getLogger().log(Level.WARNING,
