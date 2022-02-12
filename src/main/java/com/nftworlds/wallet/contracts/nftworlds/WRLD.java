@@ -41,7 +41,7 @@ public class WRLD {
         Credentials credentials = null;
 
         try {
-            credentials = Credentials.create(Keys.createEcKeyPair()); //We're only reading so this can be anything
+            credentials = Credentials.create("0x0000000000000000000000000000000000000000000000000000000000000000"); //We're only reading so this can be anything
         } catch (Exception ex) {
             ex.printStackTrace();
         }
