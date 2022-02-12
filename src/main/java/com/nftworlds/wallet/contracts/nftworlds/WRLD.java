@@ -89,7 +89,7 @@ public class WRLD {
                 Uint256 ref = (Uint256) data.get(1);
                 double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
 
-                Bukkit.getLogger().log(Level.INFO, "Transfer of " + amount.getValue().toString() + " $WRLD with refid " + ref.getValue().toString());
+                Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD with refid " + ref.getValue().toString());
 
                 for (NFTPlayer nftPlayer : NFTPlayer.getPlayers()) {
                     for (Wallet wallet : nftPlayer.getWallets()) {
@@ -139,7 +139,7 @@ public class WRLD {
                 Uint256 amount = (Uint256) data.get(0);
                 double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
 
-                Bukkit.getLogger().log(Level.INFO, "Transfer of " + amount.getValue().toString() + " $WRLD. Updating balances.");
+                Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD. Updating balances.");
 
                 for (NFTPlayer nftPlayer : NFTPlayer.getPlayers()) {
                     for (Wallet wallet : nftPlayer.getWallets()) {
