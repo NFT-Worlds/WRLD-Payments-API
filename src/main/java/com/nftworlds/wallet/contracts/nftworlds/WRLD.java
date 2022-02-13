@@ -68,7 +68,7 @@ public class WRLD {
     public void polygonPaymentListener() {
         EthFilter transferFilter = new EthFilter(
             DefaultBlockParameterName.LATEST,
-            DefaultBlockParameterName.PENDING,
+            DefaultBlockParameterName.LATEST,
             this.polygonWRLDTokenContract.getContractAddress()
         ).addOptionalTopics(WRLD.TRANSFER_REF_EVENT_TOPIC, WRLD.TRANSFER_EVENT_TOPIC);
 
@@ -148,20 +148,21 @@ public class WRLD {
 
                 Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD from " + fromAddress.toString() + " to " + toAddress.toString() + " . Updating balances.");
 
-                boolean found = false;
+                boolean foundSender = false;
+                boolean foundReceiver = false;
                 for (NFTPlayer nftPlayer : NFTPlayer.getPlayers()) {
                     for (Wallet wallet : nftPlayer.getWallets()) {
                         if (wallet.getAddress().equalsIgnoreCase(fromAddress.toString())) {
                             wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() - received);
-                            found = true;
+                            foundSender = true;
                         }
                         if (wallet.getAddress().equalsIgnoreCase(toAddress.toString())) {
                             wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() + received);
-                            found = true;
+                            foundReceiver = true;
                         }
-                        if (found) break;
+                        if (foundSender && foundReceiver) break;
                     }
-                    if (found) break;
+                    if (foundSender && foundReceiver) break;
                 }
             }
         },
