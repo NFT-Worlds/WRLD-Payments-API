@@ -97,7 +97,7 @@ public class Wallet {
             if (player != null) {
                 Uint256 refID = new Uint256(new BigInteger(256, new Random()));
                 new PeerToPeerPayment(to, nftPlayer, amount, refID, network, reason);
-                String paymentLink = "https://nftworlds.com/pay/?to="+to.getPrimaryWallet()+"&amount="+amount+"&ref="+refID.getValue().toString();
+                String paymentLink = "https://nftworlds.com/pay/?to="+to.getPrimaryWallet().getAddress()+"&amount="+amount+"&ref="+refID.getValue().toString();
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink);
             }
         }
