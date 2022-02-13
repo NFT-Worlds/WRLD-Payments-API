@@ -127,4 +127,20 @@ public class WalletAPI {
         }
     }
 
+    /**
+     * Create a peer to peer payment link
+     * @param from
+     * @param to
+     * @param amount
+     * @param network
+     * @param reason
+     */
+    public void createPlayerPayment(Player from, Player to, double amount, Network network, String reason) {
+        NFTPlayer nftPlayerFrom = NFTPlayer.getByUUID(from.getUniqueId());
+        NFTPlayer nftPlayerTo = NFTPlayer.getByUUID(to.getUniqueId());
+        if (nftPlayerFrom != null && nftPlayerTo != null) {
+            nftPlayerFrom.createPlayerPayment(nftPlayerTo, amount, network, reason);
+        }
+    }
+
 }

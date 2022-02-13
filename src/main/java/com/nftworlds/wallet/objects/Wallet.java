@@ -83,4 +83,24 @@ public class Wallet {
         //TODO: Send WRLD to wallet
     }
 
+    /**
+     * Create a peer to peer payment link for player
+     * @param to
+     * @param amount
+     * @param network
+     * @param reason
+     */
+    public void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason) {
+        NFTPlayer nftPlayer = NFTPlayer.getByUUID(associatedPlayer);
+        if (nftPlayer != null && to != null) {
+            Player player = Bukkit.getPlayer(nftPlayer.getUuid());
+            if (player != null) {
+                Uint256 refID = new Uint256(new BigInteger(256, new Random()));
+                new PeerToPeerPayment(to, nftPlayer, amount, refID, network, reason);
+                String paymentLink = "https://nftworlds.com/pay/?to="+to.getPrimaryWallet()+"&amount="+amount+"&ref="+refID.getValue().toString();
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink);
+            }
+        }
+    }
+
 }

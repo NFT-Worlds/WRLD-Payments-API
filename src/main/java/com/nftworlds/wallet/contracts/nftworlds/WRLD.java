@@ -4,11 +4,9 @@ import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.config.Config;
 import com.nftworlds.wallet.contracts.wrappers.ethereum.EthereumWRLDToken;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
+import com.nftworlds.wallet.event.PeerToPeerPayEvent;
 import com.nftworlds.wallet.event.PlayerTransactEvent;
-import com.nftworlds.wallet.objects.NFTPlayer;
-import com.nftworlds.wallet.objects.Network;
-import com.nftworlds.wallet.objects.PaymentRequest;
-import com.nftworlds.wallet.objects.Wallet;
+import com.nftworlds.wallet.objects.*;
 import com.nftworlds.wallet.rpcs.Ethereum;
 import com.nftworlds.wallet.rpcs.Polygon;
 import org.bukkit.Bukkit;
@@ -90,18 +88,6 @@ public class WRLD {
                 double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
 
                 Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD with refid " + ref.getValue().toString() + " from " + fromAddress.toString() + " to " + toAddress.toString());
-                /*
-                for (NFTPlayer nftPlayer : NFTPlayer.getPlayers()) {
-                    for (Wallet wallet : nftPlayer.getWallets()) {
-                        if (wallet.getAddress().equalsIgnoreCase(fromAddress.toString())) {
-                            wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() - received);
-                        }
-                        if (wallet.getAddress().equalsIgnoreCase(toAddress.toString())) {
-                            wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() + received);
-                        }
-                    }
-                }
-                 */
 
                 PaymentRequest paymentRequest = PaymentRequest.getPayment(ref, Network.POLYGON);
                 if (paymentRequest != null) {
@@ -127,8 +113,28 @@ public class WRLD {
                         Bukkit.getLogger().log(Level.WARNING,
                                 "Payment with REFID " + ref.getValue().toString() + " was receive but amount was " + received + ". Expected " + paymentRequest.getAmount());
                     }
-                    // Map "fromAddress" back to a player?
-                    // Trigger callback or hook of some kind devs can build off of when getting valid incoming payments with ref?
+                } else { //Now let's check if this is a peer to peer payment
+                    PeerToPeerPayment peerToPeerPayment = PeerToPeerPayment.getPayment(ref, Network.POLYGON);
+                    if (peerToPeerPayment != null) {
+                        Bukkit.getLogger().log(Level.INFO, "Transfer found in peer to peer payments");
+
+                        Bukkit.getLogger().log(Level.INFO, "Requested: " + peerToPeerPayment.getAmount() + ", Received: " + received);
+                        if (peerToPeerPayment.getAmount() != received) {
+                            peerToPeerPayment.setAmount(received);
+                            Bukkit.getLogger().log(Level.INFO, "Amount expected was different than amount received, value adjusted.");
+                        }
+
+                        PeerToPeerPayment.getPeerToPeerPayments().remove(peerToPeerPayment);
+                        if (peerToPeerPayment != null) {
+                            Bukkit.getLogger().log(Level.INFO, "Event fired");
+                            Bukkit.getScheduler().runTask(NFTWorlds.getInstance(), new Runnable() {
+                                @Override
+                                public void run() {
+                                    new PeerToPeerPayEvent(Bukkit.getPlayer(peerToPeerPayment.getTo()), Bukkit.getPlayer(peerToPeerPayment.getFrom()), received, paymentRequest.getReason(), ref).callEvent(); //TODO: Test if works for offline players
+                                }
+                            });
+                        }
+                    }
                 }
             } else if (eventHash.equals(TRANSFER_EVENT_TOPIC)) {
                 Bukkit.getLogger().log(Level.INFO, "Payment detected");

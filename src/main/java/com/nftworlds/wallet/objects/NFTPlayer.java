@@ -76,6 +76,18 @@ public class NFTPlayer {
         getPrimaryWallet().payWRLD(amount, network, reason);
     }
 
+    /**
+     * Create a peer to peer player payment link
+     *
+     * @param to
+     * @param amount
+     * @param network
+     * @param reason
+     */
+    public void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason) {
+        getPrimaryWallet().createPlayerPayment(to, amount, network, reason);
+    }
+
     public static void remove(UUID uuid) {
         players.removeIf(nftPlayer -> nftPlayer.getUuid().equals(uuid));
         PaymentRequest.removePaymentsFor(uuid);
