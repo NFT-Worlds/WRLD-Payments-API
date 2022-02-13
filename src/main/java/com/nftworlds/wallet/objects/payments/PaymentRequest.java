@@ -35,9 +35,9 @@ public class PaymentRequest {
         paymentRequests.removeIf(paymentRequest -> paymentRequest.getAssociatedPlayer().equals(uuid));
     }
 
-    public static PaymentRequest getPayment(Uint256 refId, Network network) {
+    public static PaymentRequest getPayment(Uint256 refid, Network network) {
         for (PaymentRequest p : paymentRequests) {
-            if (refId.equals(p.getRefid()) && network == p.getNetwork()) {
+            if (refid.equals(p.getRefid()) && network == p.getNetwork()) {
                 return p;
             }
         }
