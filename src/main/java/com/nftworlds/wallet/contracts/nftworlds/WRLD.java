@@ -130,7 +130,7 @@ public class WRLD {
                             Bukkit.getScheduler().runTask(NFTWorlds.getInstance(), new Runnable() {
                                 @Override
                                 public void run() {
-                                    new PeerToPeerPayEvent(Bukkit.getPlayer(peerToPeerPayment.getTo()), Bukkit.getPlayer(peerToPeerPayment.getFrom()), received, paymentRequest.getReason(), ref).callEvent(); //TODO: Test if works for offline players
+                                    new PeerToPeerPayEvent(Bukkit.getPlayer(peerToPeerPayment.getTo()), Bukkit.getPlayer(peerToPeerPayment.getFrom()), received, peerToPeerPayment.getReason(), ref).callEvent(); //TODO: Test if works for offline players
                                 }
                             });
                         }
