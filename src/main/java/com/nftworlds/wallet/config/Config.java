@@ -19,6 +19,8 @@ public class Config {
     private String polygonWrldContract;
     private String ethereumWrldContract;
 
+    private int linkTimeout; //Link timeout in minutes
+
     public void registerConfig() {
         NFTWorlds wallet = NFTWorlds.getInstance();
         FileConfiguration config = wallet.getConfig();
@@ -47,6 +49,8 @@ public class Config {
         if (validateAddress(ethereumWrldContract, "Ethereum WRLD Contract")) {
             this.ethereumWrldContract = ethereumWrldContract;
         }
+
+        this.linkTimeout = config.getInt("link-timeout");
     }
 
     private boolean validateAddress(String address, String name) {

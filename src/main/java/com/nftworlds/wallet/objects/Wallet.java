@@ -1,6 +1,8 @@
 package com.nftworlds.wallet.objects;
 
 import com.nftworlds.wallet.NFTWorlds;
+import com.nftworlds.wallet.objects.payments.PaymentRequest;
+import com.nftworlds.wallet.objects.payments.PeerToPeerPayment;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -11,6 +13,8 @@ import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import java.util.UUID;
 
@@ -65,8 +69,9 @@ public class Wallet {
             Player player = Bukkit.getPlayer(nftPlayer.getUuid());
             if (player != null) {
                 Uint256 refID = new Uint256(new BigInteger(256, new Random())); //NOTE: This generates a random Uint256 to use as a reference. Don't know if we want to change this or not.
-                new PaymentRequest(associatedPlayer, amount, refID, network, reason);
-                String paymentLink = "https://nftworlds.com/pay/?to="+nftWorlds.getNftConfig().getServerWalletAddress()+"&amount="+amount+"&ref="+refID.getValue().toString();
+                long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.MINUTES).toEpochMilli();
+                new PaymentRequest(associatedPlayer, amount, refID, network, reason, timeout);
+                String paymentLink = "https://nftworlds.com/pay/?to="+nftWorlds.getNftConfig().getServerWalletAddress()+"&amount="+amount+"&ref="+refID.getValue().toString()+"&timeout="+timeout;
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink); //NOTE: Yeah this will look nicer and we'll do QR codes as well
             }
         }
@@ -91,13 +96,15 @@ public class Wallet {
      * @param reason
      */
     public void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason) {
+        NFTWorlds nftWorlds = NFTWorlds.getInstance();
         NFTPlayer nftPlayer = NFTPlayer.getByUUID(associatedPlayer);
         if (nftPlayer != null && to != null) {
             Player player = Bukkit.getPlayer(nftPlayer.getUuid());
             if (player != null) {
                 Uint256 refID = new Uint256(new BigInteger(256, new Random()));
-                new PeerToPeerPayment(to, nftPlayer, amount, refID, network, reason);
-                String paymentLink = "https://nftworlds.com/pay/?to="+to.getPrimaryWallet().getAddress()+"&amount="+amount+"&ref="+refID.getValue().toString();
+                long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.MINUTES).toEpochMilli();
+                new PeerToPeerPayment(to, nftPlayer, amount, refID, network, reason, timeout);
+                String paymentLink = "https://nftworlds.com/pay/?to="+to.getPrimaryWallet().getAddress()+"&amount="+amount+"&ref="+refID.getValue().toString()+"&timeout="+timeout;
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink);
             }
         }

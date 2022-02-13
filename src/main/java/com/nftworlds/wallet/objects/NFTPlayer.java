@@ -90,7 +90,7 @@ public class NFTPlayer {
 
     public static void remove(UUID uuid) {
         players.removeIf(nftPlayer -> nftPlayer.getUuid().equals(uuid));
-        PaymentRequest.removePaymentsFor(uuid);
+        //PaymentRequest.removePaymentsFor(uuid);
     }
 
     public static NFTPlayer getByUUID(UUID uuid) {

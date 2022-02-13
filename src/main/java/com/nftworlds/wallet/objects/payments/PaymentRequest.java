@@ -1,5 +1,6 @@
-package com.nftworlds.wallet.objects;
+package com.nftworlds.wallet.objects.payments;
 
+import com.nftworlds.wallet.objects.Network;
 import lombok.Getter;
 import org.web3j.abi.datatypes.generated.Uint256;
 
@@ -18,12 +19,15 @@ public class PaymentRequest {
     private Network network;
     private String reason;
 
-    public PaymentRequest(UUID associatedPlayer, double amount, Uint256 refid, Network network, String reason) {
+    private long timeout;
+
+    public PaymentRequest(UUID associatedPlayer, double amount, Uint256 refid, Network network, String reason, long timeout) {
         this.associatedPlayer = associatedPlayer;
         this.amount = amount;
         this.refid = refid;
         this.network = network;
         this.reason = reason;
+        this.timeout = timeout;
         paymentRequests.add(this);
     }
 

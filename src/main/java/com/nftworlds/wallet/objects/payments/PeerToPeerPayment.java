@@ -1,5 +1,7 @@
-package com.nftworlds.wallet.objects;
+package com.nftworlds.wallet.objects.payments;
 
+import com.nftworlds.wallet.objects.NFTPlayer;
+import com.nftworlds.wallet.objects.Network;
 import lombok.Getter;
 import lombok.Setter;
 import org.web3j.abi.datatypes.generated.Uint256;
@@ -20,13 +22,16 @@ public class PeerToPeerPayment {
     private Network network;
     private String reason;
 
-    public PeerToPeerPayment(NFTPlayer to, NFTPlayer from, double amount, Uint256 refid, Network network, String reason) {
+    private long timeout;
+
+    public PeerToPeerPayment(NFTPlayer to, NFTPlayer from, double amount, Uint256 refid, Network network, String reason, long timeout) {
         this.to = to.getUuid();
         this.from = from.getUuid();
         this.amount = amount;
         this.refid = refid;
         this.network = network;
         this.reason = reason;
+        this.timeout = timeout;
         peerToPeerPayments.add(this);
     }
 
