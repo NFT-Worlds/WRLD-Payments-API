@@ -69,9 +69,9 @@ public class Wallet {
             Player player = Bukkit.getPlayer(nftPlayer.getUuid());
             if (player != null) {
                 Uint256 refID = new Uint256(new BigInteger(256, new Random())); //NOTE: This generates a random Uint256 to use as a reference. Don't know if we want to change this or not.
-                long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.MINUTES).toEpochMilli();
+                long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
                 new PaymentRequest(associatedPlayer, amount, refID, network, reason, timeout);
-                String paymentLink = "https://nftworlds.com/pay/?to="+nftWorlds.getNftConfig().getServerWalletAddress()+"&amount="+amount+"&ref="+refID.getValue().toString()+"&timeout="+timeout;
+                String paymentLink = "https://nftworlds.com/pay/?to="+nftWorlds.getNftConfig().getServerWalletAddress()+"&amount="+amount+"&ref="+refID.getValue().toString()+"&expires="+(int)(timeout/1000);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink); //NOTE: Yeah this will look nicer and we'll do QR codes as well
             }
         }
@@ -102,9 +102,9 @@ public class Wallet {
             Player player = Bukkit.getPlayer(nftPlayer.getUuid());
             if (player != null) {
                 Uint256 refID = new Uint256(new BigInteger(256, new Random()));
-                long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.MINUTES).toEpochMilli();
+                long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
                 new PeerToPeerPayment(to, nftPlayer, amount, refID, network, reason, timeout);
-                String paymentLink = "https://nftworlds.com/pay/?to="+to.getPrimaryWallet().getAddress()+"&amount="+amount+"&ref="+refID.getValue().toString()+"&timeout="+timeout;
+                String paymentLink = "https://nftworlds.com/pay/?to="+to.getPrimaryWallet().getAddress()+"&amount="+amount+"&ref="+refID.getValue().toString()+"&expires="+(int)(timeout/1000);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink);
             }
         }
