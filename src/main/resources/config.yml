@@ -1,4 +1,8 @@
-server-wallet: 0x0000000000000000000000000000000000000000
-node-url:
-safety:
-  send-wrld: false
+polygon_https_rpc: "https://polygon-mainnet.g.alchemy.com/v2/ZZhQH1Yt3EHggV-mBfVGZTrIy9o5XT9M"
+ethereum_https_rpc: "https://eth-mainnet.alchemyapi.io/v2/BJKzGRUBi_0Gc37k55IDF0NIyEOExYsd"
+server_wallet_address: "0x2a52d32b2fB09492ddE1CA2c36E1c69531664461"
+contracts:
+  polygon_player_contract: "0xD92BA3573B9531610c0e86305890E7a9F61fEFB9"
+  polygon_wrld_contract: "0xD5d86FC8d5C0Ea1aC1Ac5Dfab6E529c9967a45E9"
+  ethereum_wrld_contract: "0xD5d86FC8d5C0Ea1aC1Ac5Dfab6E529c9967a45E9"
+link-timeout: 1800
