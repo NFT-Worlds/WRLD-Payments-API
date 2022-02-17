@@ -1,6 +1,5 @@
 package com.nftworlds.wallet.contracts.wrappers.polygon;
 
-import com.nftworlds.wallet.rpcs.Polygon;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import java.math.BigInteger;
@@ -30,9 +29,9 @@ import org.web3j.tx.gas.ContractGasProvider;
 
 /**
  * Contract wrapper for NFT Worlds player wallet and state mapping
- * on the Polygon chain. Players contract version 1.3
- * Polygon Mainnet contract address: 0xD92BA3573B9531610c0e86305890E7a9F61fEFB9
- * Polygon Mainnet contract block explorer: https://polygonscan.com/address/0xD92BA3573B9531610c0e86305890E7a9F61fEFB9
+ * on the Polygon chain. Players contract version 1.4
+ * Polygon Mainnet contract address: 0xeA0f9f2015Bd4711a0a4d51815Bd144FDF2eF9c0
+ * Polygon Mainnet contract block explorer: https://polygonscan.com/address/0xeA0f9f2015Bd4711a0a4d51815Bd144FDF2eF9c0
  * Auto-generated with web3j version 4.1.1
  */
 
@@ -370,10 +369,11 @@ public class PolygonPlayers extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> setPlayerSecondaryWallet(String _playerUUID) {
+    public RemoteFunctionCall<TransactionReceipt> setPlayerSecondaryWallet(String _playerUUID, byte[] _signature) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_SETPLAYERSECONDARYWALLET,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_playerUUID)),
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_playerUUID),
+                        new org.web3j.abi.datatypes.DynamicBytes(_signature)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
