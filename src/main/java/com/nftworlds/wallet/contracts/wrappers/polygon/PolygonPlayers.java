@@ -30,8 +30,8 @@ import org.web3j.tx.gas.ContractGasProvider;
 /**
  * Contract wrapper for NFT Worlds player wallet and state mapping
  * on the Polygon chain. Players contract version 1.4
- * Polygon Mainnet contract address: 0xeA0f9f2015Bd4711a0a4d51815Bd144FDF2eF9c0
- * Polygon Mainnet contract block explorer: https://polygonscan.com/address/0xeA0f9f2015Bd4711a0a4d51815Bd144FDF2eF9c0
+ * Polygon Mainnet contract address: 0xF405Fb60690395D8d4d047Cc8916Df256270285f
+ * Polygon Mainnet contract block explorer: https://polygonscan.com/address/0xF405Fb60690395D8d4d047Cc8916Df256270285f
  * Auto-generated with web3j version 4.1.1
  */
 
