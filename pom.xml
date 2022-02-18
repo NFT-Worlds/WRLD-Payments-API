@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.nftworlds</groupId>
-    <artifactId>WRLDPaymentsAPI</artifactId>
+    <artifactId>wrld-payments-api</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>WRLDPaymentsAPI</name>
+    <name>wrld-payments-api</name>
 
     <description>NFT Worlds Wallet API</description>
     <properties>
