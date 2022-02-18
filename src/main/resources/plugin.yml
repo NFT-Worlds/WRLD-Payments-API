@@ -1,4 +1,4 @@
-name: Wallet
+name: WRLDPaymentsAPI
 version: 1.0
 authors: [Jacob, ArkDev]
 main: com.nftworlds.wallet.NFTWorlds

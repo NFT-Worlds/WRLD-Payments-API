@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.nftworlds</groupId>
-    <artifactId>Wallet</artifactId>
+    <artifactId>WRLDPaymentsAPI</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>Wallet</name>
+    <name>WRLDPaymentsAPI</name>
 
     <description>NFT Worlds Wallet API</description>
     <properties>
@@ -107,4 +107,12 @@
             <version>20211205</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/NFT-Worlds/Server-Plugin</url>
+        </repository>
+    </distributionManagement>
 </project>
