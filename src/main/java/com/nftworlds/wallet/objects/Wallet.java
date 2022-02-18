@@ -63,7 +63,6 @@ public class Wallet {
      */
     public void requestWRLD(double amount, Network network, String reason) {
         NFTWorlds nftWorlds = NFTWorlds.getInstance();
-        //BigDecimal requesting = Convert.toWei(BigDecimal.valueOf(amount), Convert.Unit.ETHER);
         NFTPlayer nftPlayer = NFTPlayer.getByUUID(associatedPlayer);
         if (nftPlayer != null) {
             Player player = Bukkit.getPlayer(nftPlayer.getUuid());

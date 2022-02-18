@@ -18,7 +18,6 @@ public class PaymentRequest {
     private Uint256 refid;
     private Network network;
     private String reason;
-
     private long timeout;
 
     public PaymentRequest(UUID associatedPlayer, double amount, Uint256 refid, Network network, String reason, long timeout) {

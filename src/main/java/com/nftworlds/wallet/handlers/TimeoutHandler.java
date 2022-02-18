@@ -8,12 +8,9 @@ import org.bukkit.Bukkit;
 public class TimeoutHandler {
 
     public void handleTimeouts() {
-        Bukkit.getScheduler().runTaskTimer(NFTWorlds.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                PaymentRequest.getPaymentRequests().removeIf(paymentRequest -> paymentRequest.getTimeout() < System.currentTimeMillis());
-                PeerToPeerPayment.getPeerToPeerPayments().removeIf(peerToPeerPayment -> peerToPeerPayment.getTimeout() < System.currentTimeMillis());
-            }
+        Bukkit.getScheduler().runTaskTimer(NFTWorlds.getInstance(), () -> {
+            PaymentRequest.getPaymentRequests().removeIf(paymentRequest -> paymentRequest.getTimeout() < System.currentTimeMillis());
+            PeerToPeerPayment.getPeerToPeerPayments().removeIf(peerToPeerPayment -> peerToPeerPayment.getTimeout() < System.currentTimeMillis());
         }, 20L, 20L);
     }
 

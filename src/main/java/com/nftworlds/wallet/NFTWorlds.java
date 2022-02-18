@@ -14,14 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class NFTWorlds extends JavaPlugin {
     private static NFTWorlds plugin;
 
     @Getter private Config nftConfig;
-    @Getter private final ExecutorService executorService = Executors.newFixedThreadPool(5); //May or may not need eventually idk yet
 
     //Contracts
     @Getter private Players players;
@@ -50,12 +46,12 @@ public class NFTWorlds extends JavaPlugin {
 
         registerEvents();
 
-        getServer().getConsoleSender().sendMessage("NFTWorlds Wallet API has been enabled");
+        getServer().getConsoleSender().sendMessage("NFTWorlds WRLD API has been enabled");
     }
 
     public void onDisable() {
         plugin = null;
-        getServer().getConsoleSender().sendMessage("NFTWorlds Wallet API has been disabled");
+        getServer().getConsoleSender().sendMessage("NFTWorlds WRLD API has been disabled");
     }
 
     public void registerEvents() {
