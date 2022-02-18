@@ -15,6 +15,8 @@ jobs:
         with:
           java-version: '16'
           distribution: 'temurin'
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
       - name: Publish package
         run: mvn --batch-mode deploy
         env:
