@@ -1,4 +1,4 @@
-**NFT Worlds WRLD Payments API**
+# NFT Worlds WRLD Payments API
 
 Please see usage documentation and get started here: https://dev.nftworlds.com/payments/wrld-payments-api
 
