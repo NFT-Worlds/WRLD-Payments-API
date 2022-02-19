@@ -36,19 +36,6 @@ jobs:
 
         echo ::set-output name=jar_path::${JAR_PATH}
         echo ::set-output name=jar_name::${JAR_NAME}
-    - name: Resolve library .jar name
-      id: resolve-lib
-      run: |
-        JAR_PATH=`echo **/wrld-payments-api-*[^shaded].jar`
-        JAR_NAME=`basename ${JAR_PATH}`
-
-        echo ::set-output name=jar_path::${JAR_PATH}
-        echo ::set-output name=jar_name::${JAR_NAME}
-    - name: Upload .jar
-      uses: actions/upload-artifact@v2
-      with:
-        name: ${{ steps.resolve-lib.outputs.jar_name }}
-        path: ${{ steps.resolve-lib.outputs.jar_path }}
     - name: Upload .jar
       uses: actions/upload-artifact@v2
       with:
