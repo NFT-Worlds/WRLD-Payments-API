@@ -21,11 +21,6 @@ jobs:
         distribution: temurin
         java-version: ${{ env.JDK_VERSION }}
         cache: maven
-    - name: Compile Spigot with BuildTools
-      uses: SpraxDev/Action-SpigotMC@v3
-      with:
-        versions: ${{ env.SPIGOT_VERSION }}
-        buildToolProvider: SpigotMC
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Resolve shaded .jar
