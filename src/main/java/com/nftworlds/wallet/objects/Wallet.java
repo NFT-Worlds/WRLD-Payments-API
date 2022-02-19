@@ -61,7 +61,7 @@ public class Wallet {
      * @param network
      * @param reason
      */
-    public void requestWRLD(double amount, Network network, String reason) {
+    public BigInteger requestWRLD(double amount, Network network, String reason) {
         NFTWorlds nftWorlds = NFTWorlds.getInstance();
         NFTPlayer nftPlayer = NFTPlayer.getByUUID(associatedPlayer);
         if (nftPlayer != null) {
@@ -71,9 +71,12 @@ public class Wallet {
                 long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
                 new PaymentRequest(associatedPlayer, amount, refID, network, reason, timeout);
                 String paymentLink = "https://nftworlds.com/pay/?to="+nftWorlds.getNftConfig().getServerWalletAddress()+"&amount="+amount+"&ref="+refID.getValue().toString()+"&expires="+(int)(timeout/1000);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink); //NOTE: Yeah this will look nicer and we'll do QR codes as well
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink); //NOTE: Yeah this will look nicer and we'll do QR codes as
+                return refID.getValue();
             }
         }
+
+        return BigInteger.ZERO;
     }
 
     /**
