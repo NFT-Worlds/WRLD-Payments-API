@@ -110,9 +110,9 @@
 
     <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/NFT-Worlds/Server-Plugin</url>
+            <id>worldql-partners-releases</id>
+            <name>WorldQL Partners Repository</name>
+            <url>https://maven.worldql.com/releases</url>
         </repository>
     </distributionManagement>
 </project>
