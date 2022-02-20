@@ -1,7 +1,10 @@
 name: Publish package to Maven
 on:
-  tags:
-    - v*
+  push:
+    branches:
+      - trunk
+    tags:
+      - v*
     
 jobs:
   publish:
