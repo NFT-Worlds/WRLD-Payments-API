@@ -1,0 +1,25 @@
+name: Publish package to Maven
+on:
+  tags:
+    - v*
+    
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - name: Publish package
+        run: mvn -e --batch-mode deploy
+        env:
+          MAVEN_NAME: ${{ secrets.MAVEN_NAME }}
+          MAVEN_TOKEN: ${{ secrets.MAVEN_SECRET }}
