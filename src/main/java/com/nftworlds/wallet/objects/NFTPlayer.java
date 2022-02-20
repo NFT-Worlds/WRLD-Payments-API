@@ -17,6 +17,7 @@ public class NFTPlayer {
     @Getter
     private UUID uuid;
     private Wallet wallets[];
+    private boolean linked = false;
 
     @SneakyThrows
     public NFTPlayer(UUID uuid) {
@@ -26,6 +27,10 @@ public class NFTPlayer {
 
         String primary = playerContract.getPlayerPrimaryWallet(uuid.toString());
         List<String> secondary = playerContract.getPlayerSecondaryWallets(uuid.toString());
+
+        if (!primary.equalsIgnoreCase("0x0000000000000000000000000000000000000000")) {
+            linked = true;
+        }
 
         wallets = new Wallet[secondary.size() + 1];
         wallets[0] = new Wallet(uuid, primary);
@@ -86,6 +91,15 @@ public class NFTPlayer {
      */
     public void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason) {
         getPrimaryWallet().createPlayerPayment(to, amount, network, reason);
+    }
+
+    /**
+     * Check if player has their wallet linked
+     *
+     * @return if player has wallet linked
+     */
+    public boolean isLinked() {
+        return linked;
     }
 
     public static void remove(UUID uuid) {

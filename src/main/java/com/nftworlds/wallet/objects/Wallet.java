@@ -83,6 +83,7 @@ public class Wallet {
      * @param reason
      */
     public void payWRLD(double amount, Network network, String reason) {
+        if (!NFTPlayer.getByUUID(getAssociatedPlayer()).isLinked()) return;
         BigDecimal sending = Convert.toWei(BigDecimal.valueOf(amount), Convert.Unit.ETHER);
         //TODO: Send WRLD to wallet
     }
@@ -100,6 +101,10 @@ public class Wallet {
         if (nftPlayer != null && to != null) {
             Player player = Bukkit.getPlayer(nftPlayer.getUuid());
             if (player != null) {
+                if (!to.isLinked()) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&' , "&cThis player does not have a wallet linked."));
+                    return;
+                }
                 Uint256 refID = new Uint256(new BigInteger(256, new Random()));
                 long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
                 new PeerToPeerPayment(to, nftPlayer, amount, refID, network, reason, timeout);
