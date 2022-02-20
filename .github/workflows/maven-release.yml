@@ -20,10 +20,13 @@ jobs:
           distribution: 'temurin'
           cache: maven
           server-id: worldql-partners-releases
-          server-username: ${{ secrets.MAVEN_NAME }}
-          server-password: ${{ secrets.MAVEN_SECRET }}
+          server-username: MAVEN_NAME
+          server-password: MAVEN_SECRET
         
       - name: Build with Maven
         run: mvn -B package --file pom.xml
       - name: Publish package
         run: mvn -e --batch-mode deploy
+        env:
+          MAVEN_NAME: ${{ secrets.MAVEN_NAME }}
+          MAVEN_SECRET: ${{ secrets.MAVEN_SECRET }}
