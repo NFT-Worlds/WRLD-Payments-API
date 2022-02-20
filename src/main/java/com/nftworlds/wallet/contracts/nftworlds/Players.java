@@ -36,23 +36,23 @@ public class Players {
     }
 
     public String getPlayerPrimaryWallet(String playerUUID) throws Exception {
-        return this.polygonPlayersContract.getPlayerPrimaryWallet(playerUUID).send();
+        return this.polygonPlayersContract.getPlayerPrimaryWallet(playerUUID.replace("-", "")).send();
     }
 
     public CompletableFuture<String> getPlayerPrimaryWalletAsync(String playerUUID) throws Exception {
-        return this.polygonPlayersContract.getPlayerPrimaryWallet(playerUUID).sendAsync();
+        return this.polygonPlayersContract.getPlayerPrimaryWallet(playerUUID.replace("-", "")).sendAsync();
     }
 
     public List<String> getPlayerSecondaryWallets(String playerUUID) throws Exception {
-        return this.polygonPlayersContract.getPlayerSecondaryWallets(playerUUID).send();
+        return this.polygonPlayersContract.getPlayerSecondaryWallets(playerUUID.replace("-", "")).send();
     }
 
     public CompletableFuture<List> getPlayerSecondaryWalletsAsync(String playerUUID) throws Exception {
-        return this.polygonPlayersContract.getPlayerSecondaryWallets(playerUUID).sendAsync();
+        return this.polygonPlayersContract.getPlayerSecondaryWallets(playerUUID.replace("-", "")).sendAsync();
     }
 
     public JSONObject getPlayerStateData(String playerUUID, String setterWalletAddress) throws Exception {
-        String stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterWalletAddress, true).send();
+        String stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID.replace("-", ""), setterWalletAddress, true).send();
 
         if (stateDataUrl.isEmpty()) {
             return null;
@@ -62,7 +62,7 @@ public class Players {
     }
 
     public JSONObject getPlayerStateDataAsync(String playerUUID, String setterWalletAddress) throws Exception {
-        CompletableFuture<String> stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID, setterWalletAddress, true).sendAsync();
+        CompletableFuture<String> stateDataUrl = this.polygonPlayersContract.getPlayerStateData(playerUUID.replace("-", ""), setterWalletAddress, true).sendAsync();
 
         if (stateDataUrl.get().isEmpty()) {
             return null;
