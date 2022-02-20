@@ -2,7 +2,7 @@ name: Publish package to Maven
 on:
   push:
     branches:
-      - trunk
+      - main
     tags:
       - v*
     
