@@ -25,8 +25,8 @@ public class NFTPlayer {
 
         Players playerContract = NFTWorlds.getInstance().getPlayers();
 
-        String primary = playerContract.getPlayerPrimaryWallet(uuid.toString());
-        List<String> secondary = playerContract.getPlayerSecondaryWallets(uuid.toString());
+        String primary = playerContract.getPlayerPrimaryWallet(uuid.toString().replace("-", ""));
+        List<String> secondary = playerContract.getPlayerSecondaryWallets(uuid.toString().replace("-", ""));
 
         if (!primary.equalsIgnoreCase("0x0000000000000000000000000000000000000000")) {
             linked = true;
