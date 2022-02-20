@@ -49,6 +49,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: ${{ steps.resolve-shaded.outputs.jar_name }}
+        name: WRLD-Payments-API ${{ steps.get_version.outputs.version }}
         files: ${{ steps.resolve-shaded.outputs.jar_path }}
         generate_release_notes: true
