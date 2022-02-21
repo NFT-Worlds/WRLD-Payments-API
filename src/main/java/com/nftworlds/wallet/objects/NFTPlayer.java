@@ -5,6 +5,7 @@ import com.nftworlds.wallet.contracts.nftworlds.Players;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +17,7 @@ public class NFTPlayer {
 
     @Getter
     private UUID uuid;
-    private Wallet wallets[];
+    private List<Wallet> wallets;
     private boolean linked = false;
 
     @SneakyThrows
@@ -32,10 +33,10 @@ public class NFTPlayer {
             linked = true;
         }
 
-        wallets = new Wallet[secondary.size() + 1];
-        wallets[0] = new Wallet(uuid, primary);
-        for (int i = 0; i < secondary.size(); i++) {
-            wallets[i + 1] = new Wallet(uuid, secondary.get(i));
+        wallets = new ArrayList<>();
+        wallets.add(new Wallet(uuid, primary));
+        for (String wallet : secondary) {
+            wallets.add(new Wallet(uuid, wallet));
         }
 
         players.add(this);
@@ -46,7 +47,7 @@ public class NFTPlayer {
      *
      * @return player's wallet(s)
      */
-    public Wallet[] getWallets() {
+    public List<Wallet> getWallets() {
         return wallets;
     }
 
@@ -56,7 +57,7 @@ public class NFTPlayer {
      * @return player's wallet
      */
     public Wallet getPrimaryWallet() {
-        return wallets[0];
+        return wallets.get(0);
     }
 
     /**

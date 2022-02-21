@@ -5,6 +5,7 @@ import com.nftworlds.wallet.objects.Network;
 import com.nftworlds.wallet.objects.Wallet;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 public class WalletAPI {
@@ -32,7 +33,7 @@ public class WalletAPI {
      * @param player
      * @return player's wallet
      */
-    public Wallet[] getWallets(Player player) {
+    public List<Wallet> getWallets(Player player) {
         return getWallets(player.getUniqueId());
     }
 
@@ -41,7 +42,7 @@ public class WalletAPI {
      * @param uuid
      * @return player's wallet
      */
-    public Wallet[] getWallets(UUID uuid) {
+    public List<Wallet> getWallets(UUID uuid) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
             return player.getWallets();
