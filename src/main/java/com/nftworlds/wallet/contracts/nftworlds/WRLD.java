@@ -34,6 +34,7 @@ import java.util.logging.Level;
 public class WRLD {
     private EthereumWRLDToken ethereumWRLDTokenContract;
     private PolygonWRLDToken polygonWRLDTokenContract;
+    private boolean debug;
 
     public static final String TRANSFER_EVENT_TOPIC = Hash.sha3String("Transfer(address,address,uint256)");
     public static final String TRANSFER_REF_EVENT_TOPIC = Hash.sha3String( "TransferRef(address,address,uint256,uint256)");
@@ -44,6 +45,7 @@ public class WRLD {
         Polygon polygonRPC = nftWorlds.getPolygonRPC();
         Config config = nftWorlds.getNftConfig();
         Credentials credentials = Credentials.create("0x0000000000000000000000000000000000000000000000000000000000000000"); //We're only reading so this can be anything
+        debug = nftWorlds.getNftConfig().isDebug();
 
         this.ethereumWRLDTokenContract = EthereumWRLDToken.load(
             config.getEthereumWrldContract(),
@@ -108,7 +110,7 @@ public class WRLD {
     }
 
     private void paymentListener_handleTransferRefEvent(Log log) {
-        Bukkit.getLogger().log(Level.INFO, "Transfer initiated");
+        if (debug) Bukkit.getLogger().log(Level.INFO, "Transfer initiated");
 
         List<String> topics = log.getTopics();
         List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonWRLDToken.TRANSFERREF_EVENT.getNonIndexedParameters());
@@ -120,21 +122,21 @@ public class WRLD {
         Uint256 ref = (Uint256) data.get(1);
         double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
 
-        Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD with refid " + ref.getValue().toString() + " from " + fromAddress.toString() + " to " + toAddress.toString());
+        if (debug) Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD with refid " + ref.getValue().toString() + " from " + fromAddress.toString() + " to " + toAddress.toString());
 
         PaymentRequest paymentRequest = PaymentRequest.getPayment(ref, Network.POLYGON);
 
         if (paymentRequest != null) {
-            Bukkit.getLogger().log(Level.INFO, "Transfer found in payment requests");
-            Bukkit.getLogger().log(Level.INFO, "Requested: " + paymentRequest.getAmount() + ", Received: " + received);
+            if (debug) Bukkit.getLogger().log(Level.INFO, "Transfer found in payment requests");
+            if (debug) Bukkit.getLogger().log(Level.INFO, "Requested: " + paymentRequest.getAmount() + ", Received: " + received);
 
             if (paymentRequest.getAmount() == received) {
-                Bukkit.getLogger().log(Level.INFO, "Payment amount verified");
+                if (debug) Bukkit.getLogger().log(Level.INFO, "Payment amount verified");
 
                 PaymentRequest.getPaymentRequests().remove(paymentRequest);
 
                 if (paymentRequest != null) {
-                    Bukkit.getLogger().log(Level.INFO, "Event fired");
+                    if (debug) Bukkit.getLogger().log(Level.INFO, "Event fired");
                     Bukkit.getScheduler().runTask(NFTWorlds.getInstance(), new Runnable() {
                         @Override
                         public void run() {
@@ -157,18 +159,18 @@ public class WRLD {
             PeerToPeerPayment peerToPeerPayment = PeerToPeerPayment.getPayment(ref, Network.POLYGON);
 
             if (peerToPeerPayment != null) {
-                Bukkit.getLogger().log(Level.INFO, "Transfer found in peer to peer payments");
-                Bukkit.getLogger().log(Level.INFO, "Requested: " + peerToPeerPayment.getAmount() + ", Received: " + received);
+                if (debug) Bukkit.getLogger().log(Level.INFO, "Transfer found in peer to peer payments");
+                if (debug) Bukkit.getLogger().log(Level.INFO, "Requested: " + peerToPeerPayment.getAmount() + ", Received: " + received);
 
                 if (peerToPeerPayment.getAmount() != received) {
                     peerToPeerPayment.setAmount(received);
-                    Bukkit.getLogger().log(Level.INFO, "Amount expected was different than amount received, value adjusted.");
+                    if (debug) Bukkit.getLogger().log(Level.INFO, "Amount expected was different than amount received, value adjusted.");
                 }
 
                 PeerToPeerPayment.getPeerToPeerPayments().remove(peerToPeerPayment);
 
                 if (peerToPeerPayment != null) {
-                    Bukkit.getLogger().log(Level.INFO, "Event fired");
+                    if (debug) Bukkit.getLogger().log(Level.INFO, "Event fired");
                     Bukkit.getScheduler().runTask(NFTWorlds.getInstance(), new Runnable() {
                         @Override
                         public void run() {
@@ -187,7 +189,7 @@ public class WRLD {
     }
 
     private void paymentListener_handleTransferEvent(Log log) {
-        Bukkit.getLogger().log(Level.INFO, "Payment detected");
+        if (debug) Bukkit.getLogger().log(Level.INFO, "Payment detected");
 
         List<String> topics = log.getTopics();
         List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonWRLDToken.TRANSFER_EVENT.getNonIndexedParameters());
@@ -198,7 +200,7 @@ public class WRLD {
         Uint256 amount = (Uint256) data.get(0);
         double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
 
-        Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD from " + fromAddress.toString() + " to " + toAddress.toString() + " . Updating balances.");
+        if (debug) Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD from " + fromAddress.toString() + " to " + toAddress.toString() + " . Updating balances.");
 
         boolean foundSender = false;
         boolean foundReceiver = false;

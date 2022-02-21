@@ -21,6 +21,8 @@ public class Config {
 
     private int linkTimeout; //Link timeout in minutes
 
+    private boolean debug;
+
     public void registerConfig() {
         NFTWorlds wallet = NFTWorlds.getInstance();
         FileConfiguration config = wallet.getConfig();
@@ -51,6 +53,7 @@ public class Config {
         }
 
         this.linkTimeout = config.getInt("link-timeout");
+        this.debug = config.getBoolean("debug");
     }
 
     private boolean validateAddress(String address, String name) {
