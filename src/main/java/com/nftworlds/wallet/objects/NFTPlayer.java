@@ -67,9 +67,10 @@ public class NFTPlayer {
      * @param network
      * @param reason
      */
-    public void requestWRLD(double amount, Network network, String reason) {
-        getPrimaryWallet().requestWRLD(amount, network, reason);
+    public <T> void requestWRLD(double amount, Network network, String reason, T payload) {
+        getPrimaryWallet().requestWRLD(amount, network, reason, payload);
     }
+
 
     /**
      * Send WRLD to a player's primary wallet

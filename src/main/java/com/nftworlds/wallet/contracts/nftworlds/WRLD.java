@@ -37,7 +37,7 @@ public class WRLD {
     private boolean debug;
 
     public static final String TRANSFER_EVENT_TOPIC = Hash.sha3String("Transfer(address,address,uint256)");
-    public static final String TRANSFER_REF_EVENT_TOPIC = Hash.sha3String( "TransferRef(address,address,uint256,uint256)");
+    public static final String TRANSFER_REF_EVENT_TOPIC = Hash.sha3String("TransferRef(address,address,uint256,uint256)");
 
     public WRLD() {
         NFTWorlds nftWorlds = NFTWorlds.getInstance();
@@ -48,17 +48,17 @@ public class WRLD {
         debug = nftWorlds.getNftConfig().isDebug();
 
         this.ethereumWRLDTokenContract = EthereumWRLDToken.load(
-            config.getEthereumWrldContract(),
-            nftWorlds.getEthereumRPC().getEthereumWeb3j(),
-            credentials,
-            ethereumRPC.getGasProvider()
+                config.getEthereumWrldContract(),
+                nftWorlds.getEthereumRPC().getEthereumWeb3j(),
+                credentials,
+                ethereumRPC.getGasProvider()
         );
 
         this.polygonWRLDTokenContract = PolygonWRLDToken.load(
-            config.getPolygonWrldContract(),
-            nftWorlds.getPolygonRPC().getPolygonWeb3j(),
-            credentials,
-            polygonRPC.getGasProvider()
+                config.getPolygonWrldContract(),
+                nftWorlds.getPolygonRPC().getPolygonWeb3j(),
+                credentials,
+                polygonRPC.getGasProvider()
         );
 
         startPolygonPaymentListener();
@@ -90,23 +90,23 @@ public class WRLD {
 
     private void startPolygonPaymentListener() {
         EthFilter transferFilter = new EthFilter(
-            DefaultBlockParameterName.LATEST,
-            DefaultBlockParameterName.LATEST,
-            this.polygonWRLDTokenContract.getContractAddress()
+                DefaultBlockParameterName.LATEST,
+                DefaultBlockParameterName.LATEST,
+                this.polygonWRLDTokenContract.getContractAddress()
         ).addOptionalTopics(WRLD.TRANSFER_REF_EVENT_TOPIC, WRLD.TRANSFER_EVENT_TOPIC);
 
         NFTWorlds.getInstance().getPolygonRPC().getPolygonWeb3j().ethLogFlowable(transferFilter).subscribe(log -> {
-            String eventHash = log.getTopics().get(0);
+                    String eventHash = log.getTopics().get(0);
 
-            if (eventHash.equals(TRANSFER_REF_EVENT_TOPIC)) {
-                this.paymentListener_handleTransferRefEvent(log);
-            } else if (eventHash.equals(TRANSFER_EVENT_TOPIC)) {
-                this.paymentListener_handleTransferEvent(log);
-            }
-        },
-        error -> {
-            error.printStackTrace();
-        });
+                    if (eventHash.equals(TRANSFER_REF_EVENT_TOPIC)) {
+                        this.paymentListener_handleTransferRefEvent(log);
+                    } else if (eventHash.equals(TRANSFER_EVENT_TOPIC)) {
+                        this.paymentListener_handleTransferEvent(log);
+                    }
+                },
+                error -> {
+                    error.printStackTrace();
+                });
     }
 
     private void paymentListener_handleTransferRefEvent(Log log) {
@@ -114,7 +114,8 @@ public class WRLD {
 
         List<String> topics = log.getTopics();
         List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonWRLDToken.TRANSFERREF_EVENT.getNonIndexedParameters());
-        TypeReference<Address> addressTypeReference = new TypeReference<Address>() {};
+        TypeReference<Address> addressTypeReference = new TypeReference<Address>() {
+        };
 
         Address fromAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(1), addressTypeReference);
         Address toAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), addressTypeReference);
@@ -122,13 +123,15 @@ public class WRLD {
         Uint256 ref = (Uint256) data.get(1);
         double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
 
-        if (debug) Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD with refid " + ref.getValue().toString() + " from " + fromAddress.toString() + " to " + toAddress.toString());
+        if (debug)
+            Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD with refid " + ref.getValue().toString() + " from " + fromAddress.toString() + " to " + toAddress.toString());
 
         PaymentRequest paymentRequest = PaymentRequest.getPayment(ref, Network.POLYGON);
 
         if (paymentRequest != null) {
             if (debug) Bukkit.getLogger().log(Level.INFO, "Transfer found in payment requests");
-            if (debug) Bukkit.getLogger().log(Level.INFO, "Requested: " + paymentRequest.getAmount() + ", Received: " + received);
+            if (debug)
+                Bukkit.getLogger().log(Level.INFO, "Requested: " + paymentRequest.getAmount() + ", Received: " + received);
 
             if (paymentRequest.getAmount() == received) {
                 if (debug) Bukkit.getLogger().log(Level.INFO, "Payment amount verified");
@@ -141,18 +144,19 @@ public class WRLD {
                         @Override
                         public void run() {
                             new PlayerTransactEvent(
-                                Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()),
-                                received,
-                                paymentRequest.getReason(),
-                                ref
+                                    Bukkit.getPlayer(paymentRequest.getAssociatedPlayer()),
+                                    received,
+                                    paymentRequest.getReason(),
+                                    ref,
+                                    paymentRequest.getPayload()
                             ).callEvent(); //TODO: Test if works for offline players
                         }
                     });
                 }
             } else {
                 Bukkit.getLogger().log(
-                    Level.WARNING,
-                    "Payment with REFID " + ref.getValue().toString() + " was receive but amount was " + received + ". Expected " + paymentRequest.getAmount()
+                        Level.WARNING,
+                        "Payment with REFID " + ref.getValue().toString() + " was receive but amount was " + received + ". Expected " + paymentRequest.getAmount()
                 );
             }
         } else { //Now let's check if this is a peer to peer payment
@@ -160,11 +164,13 @@ public class WRLD {
 
             if (peerToPeerPayment != null) {
                 if (debug) Bukkit.getLogger().log(Level.INFO, "Transfer found in peer to peer payments");
-                if (debug) Bukkit.getLogger().log(Level.INFO, "Requested: " + peerToPeerPayment.getAmount() + ", Received: " + received);
+                if (debug)
+                    Bukkit.getLogger().log(Level.INFO, "Requested: " + peerToPeerPayment.getAmount() + ", Received: " + received);
 
                 if (peerToPeerPayment.getAmount() != received) {
                     peerToPeerPayment.setAmount(received);
-                    if (debug) Bukkit.getLogger().log(Level.INFO, "Amount expected was different than amount received, value adjusted.");
+                    if (debug)
+                        Bukkit.getLogger().log(Level.INFO, "Amount expected was different than amount received, value adjusted.");
                 }
 
                 PeerToPeerPayment.getPeerToPeerPayments().remove(peerToPeerPayment);
@@ -175,11 +181,11 @@ public class WRLD {
                         @Override
                         public void run() {
                             new PeerToPeerPayEvent(
-                                Bukkit.getPlayer(peerToPeerPayment.getTo()),
-                                Bukkit.getPlayer(peerToPeerPayment.getFrom()),
-                                received,
-                                peerToPeerPayment.getReason(),
-                                ref
+                                    Bukkit.getPlayer(peerToPeerPayment.getTo()),
+                                    Bukkit.getPlayer(peerToPeerPayment.getFrom()),
+                                    received,
+                                    peerToPeerPayment.getReason(),
+                                    ref
                             ).callEvent(); //TODO: Test if works for offline players
                         }
                     });
@@ -193,14 +199,16 @@ public class WRLD {
 
         List<String> topics = log.getTopics();
         List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonWRLDToken.TRANSFER_EVENT.getNonIndexedParameters());
-        TypeReference<Address> addressTypeReference = new TypeReference<Address>() {};
+        TypeReference<Address> addressTypeReference = new TypeReference<Address>() {
+        };
 
         Address fromAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(1), addressTypeReference);
         Address toAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), addressTypeReference);
         Uint256 amount = (Uint256) data.get(0);
         double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
 
-        if (debug) Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD from " + fromAddress.toString() + " to " + toAddress.toString() + " . Updating balances.");
+        if (debug)
+            Bukkit.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD from " + fromAddress.toString() + " to " + toAddress.toString() + " . Updating balances.");
 
         boolean foundSender = false;
         boolean foundReceiver = false;

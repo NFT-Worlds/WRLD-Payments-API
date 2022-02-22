@@ -60,8 +60,9 @@ public class Wallet {
      * @param amount
      * @param network
      * @param reason
+     * @param payload
      */
-    public void requestWRLD(double amount, Network network, String reason) {
+    public <T> void requestWRLD(double amount, Network network, String reason, T payload) {
         NFTWorlds nftWorlds = NFTWorlds.getInstance();
         NFTPlayer nftPlayer = NFTPlayer.getByUUID(associatedPlayer);
         if (nftPlayer != null) {
@@ -69,8 +70,9 @@ public class Wallet {
             if (player != null) {
                 Uint256 refID = new Uint256(new BigInteger(256, new Random())); //NOTE: This generates a random Uint256 to use as a reference. Don't know if we want to change this or not.
                 long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
-                new PaymentRequest(associatedPlayer, amount, refID, network, reason, timeout);
+                new PaymentRequest(associatedPlayer, amount, refID, network, reason, timeout, payload);
                 String paymentLink = "https://nftworlds.com/pay/?to="+nftWorlds.getNftConfig().getServerWalletAddress()+"&amount="+amount+"&ref="+refID.getValue().toString()+"&expires="+(int)(timeout/1000);
+                player.sendMessage(ChatColor.GOLD + "Incoming payment request for: " + ChatColor.WHITE + reason);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink); //NOTE: Yeah this will look nicer and we'll do QR codes as
             }
         }

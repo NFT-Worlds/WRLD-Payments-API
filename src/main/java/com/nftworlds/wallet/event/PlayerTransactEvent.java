@@ -9,18 +9,20 @@ import org.web3j.abi.datatypes.generated.Uint256;
 /**
  * Holds information for player transaction events
  */
-public class PlayerTransactEvent extends PlayerEvent {
+public class PlayerTransactEvent<T> extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private double amount;
     private String reason;
     private Uint256 refID;
+    private T payload;
 
-    public PlayerTransactEvent(@NotNull final Player player, @NotNull final double amount, @NotNull final String reason, @NotNull final Uint256 refID) {
+    public PlayerTransactEvent(@NotNull final Player player, final double amount, @NotNull final String reason, @NotNull final Uint256 refID, @NotNull final T payload) {
         super(player);
         this.amount = amount;
         this.reason = reason;
         this.refID = refID;
+        this.payload = payload;
     }
 
     /**
@@ -64,10 +66,16 @@ public class PlayerTransactEvent extends PlayerEvent {
     }
 
     @NotNull
+    public T getPayload() {
+        return payload;
+    }
+
+    @NotNull
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
+
 
     @NotNull
     public static HandlerList getHandlerList() {
