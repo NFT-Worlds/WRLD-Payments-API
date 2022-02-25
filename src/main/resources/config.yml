@@ -1,4 +1,4 @@
-polygon_https_rpc: "https://polygon-mainnet.g.alchemy.com/v2/ZZhQH1Yt3EHggV-mBfVGZTrIy9o5XT9M"
+polygon_https_rpc: "https://polygon-rpc.com"
 ethereum_https_rpc: "https://eth-mainnet.alchemyapi.io/v2/BJKzGRUBi_0Gc37k55IDF0NIyEOExYsd"
 server_wallet_address: "0x2a52d32b2fB09492ddE1CA2c36E1c69531664461"
 contracts:
