@@ -70,7 +70,7 @@ public class WRLD {
                 config.getPolygonWrldContract(),
                 nftWorlds.getPolygonRPC().getPolygonWeb3j(),
                 txManager,
-                new StaticGasProvider(BigInteger.valueOf(35_100_000_000L), BigInteger.valueOf(9_000_000))
+                new StaticGasProvider(BigInteger.valueOf(80_100_000_000L), BigInteger.valueOf(9_000_000))
         );
 
         startPolygonPaymentListener();
