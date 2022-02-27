@@ -1,10 +1,13 @@
 package com.nftworlds.wallet.objects;
 
 import com.nftworlds.wallet.NFTWorlds;
+import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
 import com.nftworlds.wallet.objects.payments.PaymentRequest;
 import com.nftworlds.wallet.objects.payments.PeerToPeerPayment;
 import lombok.Getter;
 import lombok.Setter;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -15,15 +18,22 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
 public class Wallet {
 
-    @Getter private UUID associatedPlayer;
-    @Getter private String address;
-    @Getter @Setter private double polygonWRLDBalance;
-    @Getter @Setter private double ethereumWRLDBalance;
+    @Getter
+    private UUID associatedPlayer;
+    @Getter
+    private String address;
+    @Getter
+    @Setter
+    private double polygonWRLDBalance;
+    @Getter
+    @Setter
+    private double ethereumWRLDBalance;
 
     public Wallet(UUID associatedPlayer, String address) {
         this.associatedPlayer = associatedPlayer;
@@ -44,6 +54,7 @@ public class Wallet {
         this.ethereumWRLDBalance = ethereumBalance;
 
     }
+
     /**
      * Get the wallet's WRLD balance
      */
@@ -57,6 +68,7 @@ public class Wallet {
 
     /**
      * Send a request for a WRLD transaction from this wallet
+     *
      * @param amount
      * @param network
      * @param reason
@@ -71,7 +83,7 @@ public class Wallet {
                 Uint256 refID = new Uint256(new BigInteger(256, new Random())); //NOTE: This generates a random Uint256 to use as a reference. Don't know if we want to change this or not.
                 long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
                 new PaymentRequest(associatedPlayer, amount, refID, network, reason, timeout, payload);
-                String paymentLink = "https://nftworlds.com/pay/?to="+nftWorlds.getNftConfig().getServerWalletAddress()+"&amount="+amount+"&ref="+refID.getValue().toString()+"&expires="+(int)(timeout/1000);
+                String paymentLink = "https://nftworlds.com/pay/?to=" + nftWorlds.getNftConfig().getServerWalletAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000);
                 player.sendMessage(ChatColor.GOLD + "Incoming payment request for: " + ChatColor.WHITE + reason);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink); //NOTE: Yeah this will look nicer and we'll do QR codes as
             }
@@ -80,18 +92,42 @@ public class Wallet {
 
     /**
      * Deposit WRLD into this wallet
+     *
      * @param amount
      * @param network
      * @param reason
      */
     public void payWRLD(double amount, Network network, String reason) {
         if (!NFTPlayer.getByUUID(getAssociatedPlayer()).isLinked()) return;
+        if (!network.equals(Network.POLYGON)) {
+            Bukkit.getLogger().warning("Attempted to call Wallet.payWRLD with unsupported network. " +
+                    "Only Polygon is supported in this plugin at the moment.");
+            return;
+        }
+
         BigDecimal sending = Convert.toWei(BigDecimal.valueOf(amount), Convert.Unit.ETHER);
-        //TODO: Send WRLD to wallet
+        Player paidPlayer = Objects.requireNonNull(Bukkit.getPlayer(this.getAssociatedPlayer()));
+        paidPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                new TextComponent(ChatColor.DARK_GREEN + "Incoming " + amount + " WRLD payment pending"));
+        try {
+            final PolygonWRLDToken polygonWRLDTokenContract = NFTWorlds.getInstance().getWrld().getPolygonWRLDTokenContract();
+            polygonWRLDTokenContract.transfer(this.getAddress(), sending.toBigInteger()).sendAsync().thenAccept((c) -> {
+                paidPlayer.sendMessage(
+                        ChatColor.translateAlternateColorCodes('&',
+                                "&6You've been paid! &7Reason&f: " + reason + "\n" +
+                                        "&a&nhttps://polygonscan.com/tx/" +
+                                        c.getTransactionHash() + "&r\n "));
+            });
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("caught error in payWrld:");
+            e.printStackTrace();
+        }
+
     }
 
     /**
      * Create a peer to peer payment link for player
+     *
      * @param to
      * @param amount
      * @param network
@@ -104,13 +140,13 @@ public class Wallet {
             Player player = Bukkit.getPlayer(nftPlayer.getUuid());
             if (player != null) {
                 if (!to.isLinked()) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&' , "&cThis player does not have a wallet linked."));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThis player does not have a wallet linked."));
                     return;
                 }
                 Uint256 refID = new Uint256(new BigInteger(256, new Random()));
                 long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
                 new PeerToPeerPayment(to, nftPlayer, amount, refID, network, reason, timeout);
-                String paymentLink = "https://nftworlds.com/pay/?to="+to.getPrimaryWallet().getAddress()+"&amount="+amount+"&ref="+refID.getValue().toString()+"&expires="+(int)(timeout/1000);
+                String paymentLink = "https://nftworlds.com/pay/?to=" + to.getPrimaryWallet().getAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink);
             }
         }

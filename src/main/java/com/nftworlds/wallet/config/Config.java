@@ -14,6 +14,7 @@ public class Config {
     private String polygonHttpsRpc;
     private String ethereumHttpsRpc;
     private String serverWalletAddress;
+    private String serverPrivateKey;
 
     private String polygonPlayerContract;
     private String polygonWrldContract;
@@ -31,6 +32,13 @@ public class Config {
 
         this.polygonHttpsRpc = config.getString("polygon_https_rpc");
         this.ethereumHttpsRpc = config.getString("ethereum_https_rpc");
+
+        String serverWalletPrivateKey = config.getString("server_wallet_private_key");
+        if (serverWalletPrivateKey != null && !serverWalletPrivateKey.equals("")) {
+            Bukkit.getLogger().warning("A private key has been set in the plugin config! Only install " +
+                    "plugins you trust. ");
+            this.serverPrivateKey = config.getString("server_wallet_private_key");
+        }
 
         String address = config.getString("server_wallet_address");
         if (validateAddress(address, "Server Wallet Address")) {
