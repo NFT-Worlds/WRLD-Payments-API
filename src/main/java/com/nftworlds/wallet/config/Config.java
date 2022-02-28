@@ -38,6 +38,8 @@ public class Config {
             Bukkit.getLogger().warning("A private key has been set in the plugin config! Only install " +
                     "plugins you trust. ");
             this.serverPrivateKey = config.getString("server_wallet_private_key");
+        } else {
+            this.serverPrivateKey = "0x0000000000000000000000000000000000000000000000000000000000000000";
         }
 
         String address = config.getString("server_wallet_address");
