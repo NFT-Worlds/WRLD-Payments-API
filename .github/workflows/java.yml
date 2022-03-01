@@ -33,20 +33,20 @@ jobs:
 
         echo ::set-output name=jar_path::${JAR_PATH}
         echo ::set-output name=jar_name::${JAR_NAME}
-    - uses: papeloto/action-zip@v1
-      with:
-        files: ${{ steps.resolve-shaded.outputs.jar_path }}
-        dest: ${{ steps.resolve-shaded.outputs.jar_name }}.zip
     - name: Upload .jar
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ steps.resolve-shaded.outputs.jar_name }}.zip
-        path: ${{ steps.resolve-shaded.outputs.jar_name }}.zip
+        name: ${{ steps.resolve-shaded.outputs.jar_name }}
+        path: ${{ steps.resolve-shaded.outputs.jar_path }}
     - name: Extract Release Version
       if: startsWith(github.ref, 'refs/tags/')
       id: get_version
       shell: bash
       run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
+    - uses: papeloto/action-zip@v1
+      with:
+        files: ${{ steps.resolve-shaded.outputs.jar_path }}
+        dest: ${{ steps.resolve-shaded.outputs.jar_name }}.zip
     - name: Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
@@ -54,5 +54,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         name: WRLD-Payments-API v${{ steps.get_version.outputs.version }}
-        files: ${{ steps.resolve-shaded.outputs.jar_path }}
+        files: ${{ steps.resolve-shaded.outputs.jar_path }}.zip
         generate_release_notes: true
