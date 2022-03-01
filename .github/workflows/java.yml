@@ -40,7 +40,7 @@ jobs:
     - name: Upload .jar
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ steps.resolve-shaded.outputs.jar_name }}
+        name: ${{ steps.resolve-shaded.outputs.jar_name }}.zip
         path: ${{ steps.resolve-shaded.outputs.jar_name }}.zip
     - name: Extract Release Version
       if: startsWith(github.ref, 'refs/tags/')
