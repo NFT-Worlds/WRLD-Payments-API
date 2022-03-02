@@ -31,6 +31,8 @@ import org.web3j.utils.Convert;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
@@ -229,7 +231,8 @@ public class WRLD {
         boolean foundSender = false;
         boolean foundReceiver = false;
 
-        for (NFTPlayer nftPlayer : NFTPlayer.getPlayers()) {
+        for (Map.Entry<UUID, NFTPlayer> entry : NFTPlayer.getPlayers().entrySet()) {
+            NFTPlayer nftPlayer = entry.getValue();
             for (Wallet wallet : nftPlayer.getWallets()) {
                 if (wallet.getAddress().equalsIgnoreCase(fromAddress.toString())) {
                     wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() - received);

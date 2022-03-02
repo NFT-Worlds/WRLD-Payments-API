@@ -9,11 +9,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NFTPlayer {
 
     @Getter
-    private static HashSet<NFTPlayer> players = new HashSet<>();
+    private static ConcurrentHashMap<UUID, NFTPlayer> players = new ConcurrentHashMap<>();
 
     @Getter
     private UUID uuid;
@@ -39,7 +40,7 @@ public class NFTPlayer {
             wallets.add(new Wallet(uuid, wallet));
         }
 
-        players.add(this);
+        players.put(uuid, this);
     }
 
     /**
@@ -105,16 +106,11 @@ public class NFTPlayer {
     }
 
     public static void remove(UUID uuid) {
-        players.removeIf(nftPlayer -> nftPlayer.getUuid().equals(uuid));
+        players.remove(uuid);
     }
 
     public static NFTPlayer getByUUID(UUID uuid) {
-        for (NFTPlayer player : players) {
-            if (player.getUuid().equals(uuid)) {
-                return player;
-            }
-        }
-        return null;
+        return players.get(uuid);
     }
 
 }
