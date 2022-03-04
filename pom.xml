@@ -81,6 +81,10 @@
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>scarsz</id>
+            <url>https://nexus.scarsz.me/content/groups/public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -105,6 +109,11 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20211205</version>
+        </dependency>
+        <dependency>
+            <groupId>ninja.amp</groupId>
+            <artifactId>ampmenus</artifactId>
+            <version>1.10.0</version>
         </dependency>
     </dependencies>
 

@@ -3,3 +3,10 @@ version: 0.1.0
 authors: [Jacob, ArkDev]
 main: com.nftworlds.wallet.NFTWorlds
 api-version: 1.17
+
+commands:
+  wallet:
+    description: Open a GUI with information about your player balance.
+    usage: /wallet
+    permission: wrldpaymentsapi.wallet
+    default: true

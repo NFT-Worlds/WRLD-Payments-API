@@ -1,10 +1,12 @@
 package com.nftworlds.wallet;
 
+import com.nftworlds.wallet.commands.WalletGUICommand;
 import com.nftworlds.wallet.config.Config;
 import com.nftworlds.wallet.contracts.nftworlds.Players;
 import com.nftworlds.wallet.contracts.nftworlds.WRLD;
 import com.nftworlds.wallet.handlers.TimeoutHandler;
 import com.nftworlds.wallet.listeners.PlayerListener;
+import com.nftworlds.wallet.menus.WalletGUI;
 import com.nftworlds.wallet.objects.NFTPlayer;
 import com.nftworlds.wallet.rpcs.Ethereum;
 import com.nftworlds.wallet.rpcs.Polygon;
@@ -38,6 +40,8 @@ public class NFTWorlds extends JavaPlugin {
         players = new Players();
         wrld = new WRLD();
 
+        WalletGUI.setup();
+
         for (Player p : Bukkit.getOnlinePlayers()) {
             new NFTPlayer(p.getUniqueId());
         }
@@ -45,6 +49,7 @@ public class NFTWorlds extends JavaPlugin {
         new TimeoutHandler().handleTimeouts();
 
         registerEvents();
+        registerCommands();
 
         getServer().getConsoleSender().sendMessage("NFTWorlds WRLD API has been enabled");
     }
@@ -57,6 +62,10 @@ public class NFTWorlds extends JavaPlugin {
     public void registerEvents() {
         PluginManager manager = getServer().getPluginManager();
         manager.registerEvents(new PlayerListener(), this);
+    }
+
+    public void registerCommands() {
+        getCommand("wallet").setExecutor(new WalletGUICommand());
     }
 
     public static NFTWorlds getInstance() {
