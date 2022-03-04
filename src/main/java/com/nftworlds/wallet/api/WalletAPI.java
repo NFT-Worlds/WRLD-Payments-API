@@ -1,9 +1,13 @@
 package com.nftworlds.wallet.api;
 
+import com.nftworlds.wallet.NFTWorlds;
+import com.nftworlds.wallet.contracts.wrappers.common.ERC20;
 import com.nftworlds.wallet.objects.NFTPlayer;
 import com.nftworlds.wallet.objects.Network;
+import com.nftworlds.wallet.objects.TransactionObjects;
 import com.nftworlds.wallet.objects.Wallet;
 import org.bukkit.entity.Player;
+import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.util.List;
 import java.util.UUID;
@@ -129,6 +133,30 @@ public class WalletAPI {
         NFTPlayer nftPlayerTo = NFTPlayer.getByUUID(to.getUniqueId());
         if (nftPlayerFrom != null && nftPlayerTo != null) {
             nftPlayerFrom.createPlayerPayment(nftPlayerTo, amount, network, reason);
+        }
+    }
+
+    /**
+     * Register a custom ERC20 token. This should be called during startup.
+     * @param contractAddress
+     */
+    public void registerERC20(String contractAddress, Network network) {
+        if (network.equals(Network.POLYGON)) {
+            ERC20 newToken = ERC20.load(
+                    contractAddress,
+                    NFTWorlds.getInstance().getPolygonRPC().getPolygonWeb3j(),
+                    TransactionObjects.polygonTransactionManager,
+                    TransactionObjects.fastGasProviderPolygon
+            );
+            Wallet.getCustomPolygonTokenWrappers().put(contractAddress, newToken);
+        } else if (network.equals(Network.ETHEREUM)) {
+            ERC20 newToken = ERC20.load(
+                    contractAddress,
+                    NFTWorlds.getInstance().getEthereumRPC().getEthereumWeb3j(),
+                    TransactionObjects.ethereumTransactionManager,
+                    new DefaultGasProvider()
+            );
+            Wallet.getCustomPolygonTokenWrappers().put(contractAddress, newToken);
         }
     }
 

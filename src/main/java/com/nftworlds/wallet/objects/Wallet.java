@@ -1,6 +1,7 @@
 package com.nftworlds.wallet.objects;
 
 import com.nftworlds.wallet.NFTWorlds;
+import com.nftworlds.wallet.contracts.wrappers.common.ERC20;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
 import com.nftworlds.wallet.objects.payments.PaymentRequest;
 import com.nftworlds.wallet.objects.payments.PeerToPeerPayment;
@@ -11,13 +12,21 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.utils.Convert;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
@@ -34,6 +43,11 @@ public class Wallet {
     @Getter
     @Setter
     private double ethereumWRLDBalance;
+    @Getter
+    private static HashMap<String, ERC20> customPolygonTokenWrappers = new HashMap<String, ERC20>();
+    private static HashMap<String, Double> customPolygonBalances = new HashMap<>();
+    @Getter
+    private static HashMap<String, ERC20> customEthereumTokenWrappers = new HashMap<String, ERC20>();
 
     public Wallet(UUID associatedPlayer, String address) {
         this.associatedPlayer = associatedPlayer;
@@ -64,6 +78,56 @@ public class Wallet {
         } else {
             return ethereumWRLDBalance;
         }
+    }
+
+    /**
+     * Refresh the wallet's balance for an arbitrary ERC20 token defined at runtime.
+     * This is a blocking call, do not run in main thread.
+     */
+    public void refreshERC20Balance(Network network, String tokenContract) {
+        if (network == Network.POLYGON) {
+            Wallet.getCustomPolygonTokenWrappers().get(tokenContract).balanceOf(address).sendAsync()
+                .thenAccept(bigInteger -> {
+                    customPolygonBalances.put(tokenContract,
+                            Convert.fromWei(bigInteger.toString(), Convert.Unit.ETHER).doubleValue());
+                });
+        }
+    }
+
+    /**
+     * Get a list of all the account's owned NFTs. Does not return metadata.
+     * This is a blocking call, do not run in main thread.
+     */
+    public JSONObject getOwnedNFTs(Network network) throws IOException, InterruptedException {
+        if (network.equals(Network.ETHEREUM)) {
+            String baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
+            String url = baseURL + "/getNFTs?owner=" + address + "&withMetadata=false";
+            return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
+        }
+        return null;
+    }
+
+    /**
+     * Get a list of all the account's owned NFTs. Returns metadata.
+     */
+    public JSONObject getOwnedNFTsFromContract(Network network, String contractAddress) throws IOException, InterruptedException {
+        if (network.equals(Network.ETHEREUM)) {
+            String baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
+            String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses=" + contractAddress;
+            return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
+        }
+        return null;
+    }
+
+    public boolean doesPlayerOwnNFTInCollection(Network network, String contractAddress) throws IOException, InterruptedException {
+        if (network.equals(Network.ETHEREUM)) {
+            String baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
+            String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses=" + contractAddress;
+            JSONObject payload = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
+            JSONArray ownedNFTs = (JSONArray) payload.get("ownedNfts");
+            return ownedNFTs.length() > 0;
+        }
+        return false;
     }
 
     /**
@@ -123,7 +187,6 @@ public class Wallet {
             Bukkit.getLogger().warning("caught error in payWrld:");
             e.printStackTrace();
         }
-
     }
 
     /**

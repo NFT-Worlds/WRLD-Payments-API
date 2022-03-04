@@ -1,5 +1,6 @@
 package com.nftworlds.wallet;
 
+import com.nftworlds.wallet.api.WalletAPI;
 import com.nftworlds.wallet.commands.WalletGUICommand;
 import com.nftworlds.wallet.config.Config;
 import com.nftworlds.wallet.contracts.nftworlds.Players;
