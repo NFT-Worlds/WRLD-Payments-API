@@ -78,15 +78,15 @@ public class WalletAPI {
      * @param amount
      * @param network
      * @param reason
+     * @param canDuplicate
      * @param payload
      */
-    public <T> void requestWRLD(UUID uuid, double amount, Network network, String reason, T payload) {
+    public <T> void requestWRLD(UUID uuid, double amount, Network network, String reason, boolean canDuplicate, T payload) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
-            player.requestWRLD(amount, network, reason, payload);
+            player.requestWRLD(amount, network, reason, canDuplicate, payload);
         }
     }
-
 
     /**
      * Send WRLD to a player's primary wallet

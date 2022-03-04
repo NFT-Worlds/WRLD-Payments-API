@@ -154,7 +154,7 @@ public class WRLD {
             if (paymentRequest.getAmount() == received) {
                 if (debug) Bukkit.getLogger().log(Level.INFO, "Payment amount verified");
 
-                PaymentRequest.getPaymentRequests().remove(paymentRequest);
+                if (!paymentRequest.isCanDuplicate()) PaymentRequest.getPaymentRequests().remove(paymentRequest);
 
                 if (paymentRequest != null) {
                     if (debug) Bukkit.getLogger().log(Level.INFO, "Event fired");

@@ -67,9 +67,11 @@ public class NFTPlayer {
      * @param amount
      * @param network
      * @param reason
+     * @param canDuplicate
+     * @param payload
      */
-    public <T> void requestWRLD(double amount, Network network, String reason, T payload) {
-        getPrimaryWallet().requestWRLD(amount, network, reason, payload);
+    public <T> void requestWRLD(double amount, Network network, String reason, boolean canDuplicate, T payload) {
+        getPrimaryWallet().requestWRLD(amount, network, reason, canDuplicate, payload);
     }
 
 

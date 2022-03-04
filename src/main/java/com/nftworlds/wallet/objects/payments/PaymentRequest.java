@@ -22,15 +22,17 @@ public class PaymentRequest<T> {
     private Network network;
     private String reason;
     private long timeout;
+    private boolean canDuplicate;
     private T payload;
 
-    public PaymentRequest(UUID associatedPlayer, double amount, Uint256 refid, Network network, String reason, long timeout, T payload) {
+    public PaymentRequest(UUID associatedPlayer, double amount, Uint256 refid, Network network, String reason, long timeout, boolean canDuplicate, T payload) {
         this.associatedPlayer = associatedPlayer;
         this.amount = amount;
         this.refid = refid;
         this.network = network;
         this.reason = reason;
         this.timeout = timeout;
+        this.canDuplicate = canDuplicate;
         this.payload = payload;
         paymentRequests.add(this);
     }
