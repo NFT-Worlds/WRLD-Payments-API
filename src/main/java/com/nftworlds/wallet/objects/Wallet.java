@@ -87,10 +87,10 @@ public class Wallet {
     public void refreshERC20Balance(Network network, String tokenContract) {
         if (network == Network.POLYGON) {
             Wallet.getCustomPolygonTokenWrappers().get(tokenContract).balanceOf(address).sendAsync()
-                .thenAccept(bigInteger -> {
-                    customPolygonBalances.put(tokenContract,
-                            Convert.fromWei(bigInteger.toString(), Convert.Unit.ETHER).doubleValue());
-                });
+                    .thenAccept(bigInteger -> {
+                        customPolygonBalances.put(tokenContract,
+                                Convert.fromWei(bigInteger.toString(), Convert.Unit.ETHER).doubleValue());
+                    });
         }
     }
 
@@ -99,35 +99,47 @@ public class Wallet {
      * This is a blocking call, do not run in main thread.
      */
     public JSONObject getOwnedNFTs(Network network) throws IOException, InterruptedException {
+        String baseURL;
         if (network.equals(Network.ETHEREUM)) {
-            String baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
-            String url = baseURL + "/getNFTs?owner=" + address + "&withMetadata=false";
-            return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
+            baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
+        } else if (network.equals(Network.POLYGON)) {
+            baseURL = NFTWorlds.getInstance().getNftConfig().getPolygonHttpsRpc();
+        } else {
+            return null;
         }
-        return null;
+        String url = baseURL + "/getNFTs?owner=" + address + "&withMetadata=false";
+        return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
     }
 
     /**
      * Get a list of all the account's owned NFTs. Returns metadata.
      */
     public JSONObject getOwnedNFTsFromContract(Network network, String contractAddress) throws IOException, InterruptedException {
+        String baseURL;
         if (network.equals(Network.ETHEREUM)) {
-            String baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
-            String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses=" + contractAddress;
-            return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
+            baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
+        } else if (network.equals(Network.POLYGON)) {
+            baseURL = NFTWorlds.getInstance().getNftConfig().getPolygonHttpsRpc();
+        } else {
+            return null;
         }
-        return null;
+        String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses=" + contractAddress;
+        return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
     }
 
     public boolean doesPlayerOwnNFTInCollection(Network network, String contractAddress) throws IOException, InterruptedException {
+        String baseURL;
         if (network.equals(Network.ETHEREUM)) {
-            String baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
-            String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses=" + contractAddress;
-            JSONObject payload = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
-            JSONArray ownedNFTs = (JSONArray) payload.get("ownedNfts");
-            return ownedNFTs.length() > 0;
+            baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
+        } else if (network.equals(Network.POLYGON)) {
+            baseURL = NFTWorlds.getInstance().getNftConfig().getPolygonHttpsRpc();
+        } else {
+            return false;
         }
-        return false;
+        String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses=" + contractAddress;
+        JSONObject payload = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
+        JSONArray ownedNFTs = (JSONArray) payload.get("ownedNfts");
+        return ownedNFTs.length() > 0;
     }
 
     /**
@@ -148,7 +160,7 @@ public class Wallet {
                 Uint256 refID = new Uint256(new BigInteger(256, new Random())); //NOTE: This generates a random Uint256 to use as a reference. Don't know if we want to change this or not.
                 long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
                 new PaymentRequest(associatedPlayer, amount, refID, network, reason, timeout, canDuplicate, payload);
-                String paymentLink = "https://nftworlds.com/pay/?to=" + nftWorlds.getNftConfig().getServerWalletAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000) + "&duplicate="+canDuplicate;
+                String paymentLink = "https://nftworlds.com/pay/?to=" + nftWorlds.getNftConfig().getServerWalletAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000) + "&duplicate=" + canDuplicate;
                 player.sendMessage(ChatColor.GOLD + "Incoming payment request for: " + ChatColor.WHITE + reason);
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink); //NOTE: Yeah this will look nicer and we'll do QR codes as
             }
