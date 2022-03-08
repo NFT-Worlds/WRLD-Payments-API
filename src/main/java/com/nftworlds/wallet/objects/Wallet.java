@@ -15,6 +15,8 @@ import org.bukkit.entity.Player;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.crypto.Credentials;
+import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 
 import java.io.IOException;
@@ -45,9 +47,12 @@ public class Wallet {
     private double ethereumWRLDBalance;
     @Getter
     private static HashMap<String, ERC20> customPolygonTokenWrappers = new HashMap<String, ERC20>();
+    @Getter
     private static HashMap<String, Double> customPolygonBalances = new HashMap<>();
     @Getter
     private static HashMap<String, ERC20> customEthereumTokenWrappers = new HashMap<String, ERC20>();
+    @Getter
+    private static HashMap<String, Double> customEthereumBalances = new HashMap<>();
 
     public Wallet(UUID associatedPlayer, String address) {
         this.associatedPlayer = associatedPlayer;
@@ -84,13 +89,28 @@ public class Wallet {
      * Refresh the wallet's balance for an arbitrary ERC20 token defined at runtime.
      * This is a blocking call, do not run in main thread.
      */
-    public void refreshERC20Balance(Network network, String tokenContract) {
+    public void refreshERC20Balance(Network network, String tokenContract) throws Exception {
         if (network == Network.POLYGON) {
-            Wallet.getCustomPolygonTokenWrappers().get(tokenContract).balanceOf(address).sendAsync()
-                    .thenAccept(bigInteger -> {
-                        customPolygonBalances.put(tokenContract,
-                                Convert.fromWei(bigInteger.toString(), Convert.Unit.ETHER).doubleValue());
-                    });
+            ERC20 customToken = Wallet.getCustomPolygonTokenWrappers().get(tokenContract);
+            if (customToken == null) {
+                customToken = ERC20.load(tokenContract, NFTWorlds.getInstance().getPolygonRPC().getPolygonWeb3j(),
+                        Credentials.create("0x0000000000000000000000000000000000000000"), new DefaultGasProvider());
+                Wallet.getCustomPolygonTokenWrappers().put(tokenContract, customToken);
+            }
+            BigInteger bigInteger = customToken.balanceOf(address).send();
+            customPolygonBalances.put(tokenContract,
+                    Convert.fromWei(bigInteger.toString(), Convert.Unit.ETHER).doubleValue());
+
+        } else if (network == Network.ETHEREUM) {
+            ERC20 customToken = Wallet.getCustomEthereumTokenWrappers().get(tokenContract);
+            if (customToken == null) {
+                customToken = ERC20.load(tokenContract, NFTWorlds.getInstance().getEthereumRPC().getEthereumWeb3j(),
+                        Credentials.create("0x0000000000000000000000000000000000000000"), new DefaultGasProvider());
+                Wallet.getCustomPolygonTokenWrappers().put(tokenContract, customToken);
+            }
+            BigInteger bigInteger = customToken.balanceOf(address).send();
+            customEthereumBalances.put(tokenContract,
+                    Convert.fromWei(bigInteger.toString(), Convert.Unit.ETHER).doubleValue());
         }
     }
 
