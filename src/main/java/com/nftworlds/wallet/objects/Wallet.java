@@ -94,7 +94,7 @@ public class Wallet {
             ERC20 customToken = Wallet.getCustomPolygonTokenWrappers().get(tokenContract);
             if (customToken == null) {
                 customToken = ERC20.load(tokenContract, NFTWorlds.getInstance().getPolygonRPC().getPolygonWeb3j(),
-                        Credentials.create("0x0000000000000000000000000000000000000000"), new DefaultGasProvider());
+                        Credentials.create(NFTWorlds.getInstance().getNftConfig().getServerPrivateKey()), new DefaultGasProvider());
                 Wallet.getCustomPolygonTokenWrappers().put(tokenContract, customToken);
             }
             BigInteger bigInteger = customToken.balanceOf(address).send();
@@ -105,10 +105,11 @@ public class Wallet {
             ERC20 customToken = Wallet.getCustomEthereumTokenWrappers().get(tokenContract);
             if (customToken == null) {
                 customToken = ERC20.load(tokenContract, NFTWorlds.getInstance().getEthereumRPC().getEthereumWeb3j(),
-                        Credentials.create("0x0000000000000000000000000000000000000000"), new DefaultGasProvider());
+                        Credentials.create(NFTWorlds.getInstance().getNftConfig().getServerPrivateKey()), new DefaultGasProvider());
                 Wallet.getCustomPolygonTokenWrappers().put(tokenContract, customToken);
             }
             BigInteger bigInteger = customToken.balanceOf(address).send();
+
             customEthereumBalances.put(tokenContract,
                     Convert.fromWei(bigInteger.toString(), Convert.Unit.ETHER).doubleValue());
         }
