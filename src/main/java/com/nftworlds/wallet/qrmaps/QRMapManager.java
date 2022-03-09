@@ -1,7 +1,8 @@
-package com.nftworlds.wallet;
+package com.nftworlds.wallet.qrmaps;
 
 import com.google.zxing.WriterException;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapRenderer;
@@ -9,16 +10,19 @@ import org.bukkit.map.MapView;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.UUID;
 
-public class QRMapRenderer extends MapRenderer {
+public class QRMapManager extends MapRenderer {
     private BufferedImage image;
     private boolean loaded;
+    public static HashMap<UUID, ItemStack> playerPreviousItem = new HashMap<>();
 
-    public QRMapRenderer() {
+    public QRMapManager() {
         this.loaded = false;
     }
 
-    public QRMapRenderer(final String url) {
+    public QRMapManager(final String url) {
         this.loaded = false;
         this.load(url);
     }

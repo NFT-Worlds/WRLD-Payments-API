@@ -1,8 +1,8 @@
 package com.nftworlds.wallet.objects;
 
-import com.nftworlds.wallet.LinkUtils;
+import com.nftworlds.wallet.qrmaps.LinkUtils;
 import com.nftworlds.wallet.NFTWorlds;
-import com.nftworlds.wallet.QRMapRenderer;
+import com.nftworlds.wallet.qrmaps.QRMapManager;
 import com.nftworlds.wallet.contracts.wrappers.common.ERC20;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
 import com.nftworlds.wallet.objects.payments.PaymentRequest;
@@ -195,7 +195,7 @@ public class Wallet {
                 MapView view = Bukkit.createMap(player.getWorld());
                 view.getRenderers().clear();
 
-                QRMapRenderer renderer = new QRMapRenderer();
+                QRMapManager renderer = new QRMapManager();
                 player.sendMessage(ChatColor.GOLD + "Incoming payment request for: " + ChatColor.WHITE + reason);
                 if (GeyserConnector.getInstance().getPlayerByUuid(player.getUniqueId()) != null && renderer.load(shortLink)) {
                     // TODO: Better error handling
@@ -206,13 +206,11 @@ public class Wallet {
                     meta.setMapView(view);
                     map.setItemMeta(meta);
 
-                    player.getInventory().addItem(map);
-                    Bukkit.getServer().getScheduler().runTaskLater(NFTWorlds.getInstance(), () -> {
-                        player.getInventory().remove(map);
-                    }, 2000L);
-                    // TODO: Improve this logic for removing the map.
+                    QRMapManager.playerPreviousItem.put(player.getUniqueId(), player.getInventory().getItem(0));
+                    player.getInventory().setItem(0, map);
+                    player.getInventory().setHeldItemSlot(0);
 
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lScan the QR code on your map!"));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lScan the QR code on your map! Right click to exit."));
 
                 } else {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink);

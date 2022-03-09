@@ -1,4 +1,4 @@
-package com.nftworlds.wallet;
+package com.nftworlds.wallet.qrmaps;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
