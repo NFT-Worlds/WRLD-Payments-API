@@ -1,6 +1,8 @@
 package com.nftworlds.wallet.objects;
 
+import com.nftworlds.wallet.LinkUtils;
 import com.nftworlds.wallet.NFTWorlds;
+import com.nftworlds.wallet.QRMapRenderer;
 import com.nftworlds.wallet.contracts.wrappers.common.ERC20;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
 import com.nftworlds.wallet.objects.payments.PaymentRequest;
@@ -11,7 +13,12 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapView;
+import org.geysermc.connector.GeyserConnector;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.web3j.abi.datatypes.generated.Uint256;
@@ -172,7 +179,7 @@ public class Wallet {
      * @param canDuplicate
      * @param payload
      */
-    public <T> void requestWRLD(double amount, Network network, String reason, boolean canDuplicate, T payload) {
+    public <T> void requestWRLD(double amount, Network network, String reason, boolean canDuplicate, T payload) throws IOException, InterruptedException {
         NFTWorlds nftWorlds = NFTWorlds.getInstance();
         NFTPlayer nftPlayer = NFTPlayer.getByUUID(associatedPlayer);
         if (nftPlayer != null) {
@@ -182,8 +189,34 @@ public class Wallet {
                 long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
                 new PaymentRequest(associatedPlayer, amount, refID, network, reason, timeout, canDuplicate, payload);
                 String paymentLink = "https://nftworlds.com/pay/?to=" + nftWorlds.getNftConfig().getServerWalletAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000) + "&duplicate=" + canDuplicate;
+
+                String shortLink = LinkUtils.shortenURL(paymentLink);
+
+                MapView view = Bukkit.createMap(player.getWorld());
+                view.getRenderers().clear();
+
+                QRMapRenderer renderer = new QRMapRenderer();
                 player.sendMessage(ChatColor.GOLD + "Incoming payment request for: " + ChatColor.WHITE + reason);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink); //NOTE: Yeah this will look nicer and we'll do QR codes as
+                if (GeyserConnector.getInstance().getPlayerByUuid(player.getUniqueId()) != null && renderer.load(shortLink)) {
+                    // TODO: Better error handling
+                    view.addRenderer(renderer);
+                    ItemStack map = new ItemStack(Material.FILLED_MAP);
+                    MapMeta meta = (MapMeta) map.getItemMeta();
+
+                    meta.setMapView(view);
+                    map.setItemMeta(meta);
+
+                    player.getInventory().addItem(map);
+                    Bukkit.getServer().getScheduler().runTaskLater(NFTWorlds.getInstance(), () -> {
+                        player.getInventory().remove(map);
+                    }, 2000L);
+                    // TODO: Improve this logic for removing the map.
+
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lScan the QR code on your map!"));
+
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&lPAY HERE: ") + ChatColor.GREEN + paymentLink);
+                }
             }
         }
     }

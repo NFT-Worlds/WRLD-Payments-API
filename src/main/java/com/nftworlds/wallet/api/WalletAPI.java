@@ -9,6 +9,7 @@ import com.nftworlds.wallet.objects.Wallet;
 import org.bukkit.entity.Player;
 import org.web3j.tx.gas.DefaultGasProvider;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,7 +86,7 @@ public class WalletAPI {
      * @param canDuplicate
      * @param payload
      */
-    public <T> void requestWRLD(UUID uuid, double amount, Network network, String reason, boolean canDuplicate, T payload) {
+    public <T> void requestWRLD(UUID uuid, double amount, Network network, String reason, boolean canDuplicate, T payload) throws IOException, InterruptedException {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
             player.requestWRLD(amount, network, reason, canDuplicate, payload);
