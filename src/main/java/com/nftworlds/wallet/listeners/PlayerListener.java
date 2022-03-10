@@ -2,6 +2,7 @@ package com.nftworlds.wallet.listeners;
 
 import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.objects.NFTPlayer;
+import com.nftworlds.wallet.qrmaps.QRMapManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -9,9 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener {
 
@@ -38,8 +42,25 @@ public class PlayerListener implements Listener {
         }
     }
 
+    @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         NFTPlayer.remove(event.getPlayer().getUniqueId());
+        restoreItemReplacedWithMap(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerRightClick(PlayerInteractEvent event) {
+        if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+            restoreItemReplacedWithMap(event.getPlayer());
+        }
+    }
+
+    private void restoreItemReplacedWithMap(Player player) {
+        ItemStack previousItem = QRMapManager.playerPreviousItem.get(player.getUniqueId());
+        if (previousItem != null) {
+            player.getInventory().setItem(0, previousItem);
+            QRMapManager.playerPreviousItem.remove(player.getUniqueId());
+        }
     }
 
 }

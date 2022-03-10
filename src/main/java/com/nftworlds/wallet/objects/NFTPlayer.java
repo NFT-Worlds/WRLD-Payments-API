@@ -5,6 +5,7 @@ import com.nftworlds.wallet.contracts.nftworlds.Players;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,7 +71,7 @@ public class NFTPlayer {
      * @param canDuplicate
      * @param payload
      */
-    public <T> void requestWRLD(double amount, Network network, String reason, boolean canDuplicate, T payload) {
+    public <T> void requestWRLD(double amount, Network network, String reason, boolean canDuplicate, T payload) throws IOException, InterruptedException {
         getPrimaryWallet().requestWRLD(amount, network, reason, canDuplicate, payload);
     }
 
