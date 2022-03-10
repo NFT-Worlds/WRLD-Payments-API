@@ -59,6 +59,7 @@
                                     </excludes>
                                 </filter>
                             </filters>
+                            <finalName>${project.name}</finalName>
                         </configuration>
                     </execution>
                 </executions>
