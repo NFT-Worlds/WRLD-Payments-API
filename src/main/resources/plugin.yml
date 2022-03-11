@@ -3,6 +3,8 @@ version: 0.1.0
 authors: [Jacob, ArkDev]
 main: com.nftworlds.wallet.NFTWorlds
 api-version: 1.17
+softdepend:
+  - Geyser-Spigot
 
 commands:
   wallet:
