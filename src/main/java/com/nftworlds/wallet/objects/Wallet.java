@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
-import org.geysermc.connector.GeyserConnector;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.web3j.abi.datatypes.generated.Uint256;
@@ -190,14 +189,15 @@ public class Wallet {
                 new PaymentRequest(associatedPlayer, amount, refID, network, reason, timeout, canDuplicate, payload);
                 String paymentLink = "https://nftworlds.com/pay/?to=" + nftWorlds.getNftConfig().getServerWalletAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000) + "&duplicate=" + canDuplicate;
 
-                String shortLink = LinkUtils.shortenURL(paymentLink);
 
                 MapView view = Bukkit.createMap(player.getWorld());
                 view.getRenderers().clear();
 
                 QRMapManager renderer = new QRMapManager();
                 player.sendMessage(ChatColor.GOLD + "Incoming payment request for: " + ChatColor.WHITE + reason);
-                if (GeyserConnector.getInstance().getPlayerByUuid(player.getUniqueId()) != null && renderer.load(shortLink)) {
+                if (Bukkit.getServer().getPluginManager().getPlugin("Geyser-Spigot") != null && org.geysermc.connector.GeyserConnector.getInstance().getPlayerByUuid(player.getUniqueId()) != null) {
+                    String shortLink = LinkUtils.shortenURL(paymentLink);
+                    renderer.load(shortLink);
                     // TODO: Better error handling
                     view.addRenderer(renderer);
                     ItemStack map = new ItemStack(Material.FILLED_MAP);
