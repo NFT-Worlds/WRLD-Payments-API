@@ -154,7 +154,7 @@ public class Wallet {
         return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
     }
 
-    public boolean doesPlayerOwnNFTInCollection(Network network, String contractAddress) throws IOException, InterruptedException {
+    public boolean doesPlayerOwnNFTInCollection(Network network, String contractAddress) {
         String baseURL;
         if (network.equals(Network.ETHEREUM)) {
             baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
@@ -164,9 +164,14 @@ public class Wallet {
             return false;
         }
         String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses=" + contractAddress;
-        JSONObject payload = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
-        JSONArray ownedNFTs = (JSONArray) payload.get("ownedNfts");
-        return ownedNFTs.length() > 0;
+        try {
+            JSONObject payload = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
+            JSONArray ownedNFTs = (JSONArray) payload.get("ownedNfts");
+            return ownedNFTs.length() > 0;
+        } catch (Exception e) {
+            NFTWorlds.getInstance().getLogger().info("Error when parsing response from " + url);
+        }
+        return false;
     }
 
     /**
