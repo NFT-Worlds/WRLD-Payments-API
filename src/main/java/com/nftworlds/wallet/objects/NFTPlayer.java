@@ -47,7 +47,7 @@ public class NFTPlayer {
             new PlayerWalletReadyEvent(
                     Objects.requireNonNull(Bukkit.getPlayer(uuid))
             ).callEvent();
-        }, 1L);
+        }, 5L);
     }
 
     /**
