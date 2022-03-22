@@ -2,14 +2,14 @@ package com.nftworlds.wallet.objects;
 
 import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.contracts.nftworlds.Players;
+import com.nftworlds.wallet.event.PlayerTransactEvent;
+import com.nftworlds.wallet.event.PlayerWalletReadyEvent;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NFTPlayer {
@@ -42,6 +42,10 @@ public class NFTPlayer {
         }
 
         players.put(uuid, this);
+
+        new PlayerWalletReadyEvent(
+                Objects.requireNonNull(Bukkit.getPlayer(uuid))
+        ).callEvent();
     }
 
     /**
