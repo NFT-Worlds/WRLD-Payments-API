@@ -43,9 +43,11 @@ public class NFTPlayer {
 
         players.put(uuid, this);
 
-        new PlayerWalletReadyEvent(
-                Objects.requireNonNull(Bukkit.getPlayer(uuid))
-        ).callEvent();
+        Bukkit.getScheduler().runTaskLater(NFTWorlds.getInstance(), () -> {
+            new PlayerWalletReadyEvent(
+                    Objects.requireNonNull(Bukkit.getPlayer(uuid))
+            ).callEvent();
+        }, 1L);
     }
 
     /**
