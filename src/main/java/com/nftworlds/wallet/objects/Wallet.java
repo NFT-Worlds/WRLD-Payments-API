@@ -232,7 +232,10 @@ public class Wallet {
      * @param reason
      */
     public void payWRLD(double amount, Network network, String reason) {
-        if (!NFTPlayer.getByUUID(getAssociatedPlayer()).isLinked()) return;
+        if (!NFTPlayer.getByUUID(getAssociatedPlayer()).isLinked()) {
+            Bukkit.getLogger().warning("Skipped outgoing transaction because wallet was not linked!");
+            return;
+        }
         if (!network.equals(Network.POLYGON)) {
             Bukkit.getLogger().warning("Attempted to call Wallet.payWRLD with unsupported network. " +
                     "Only Polygon is supported in this plugin at the moment.");
