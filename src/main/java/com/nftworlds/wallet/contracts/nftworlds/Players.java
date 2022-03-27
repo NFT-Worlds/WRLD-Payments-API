@@ -119,7 +119,7 @@ public class Players {
     }
 
     public void paymentListener_handlePrimaryWalletSetEvent(Log log) {
-        if (debug) Bukkit.getLogger().log(Level.INFO, "Primary wallet updated");
+        if (debug) NFTWorlds.getInstance().getLogger().log(Level.INFO, "Primary wallet updated");
 
         List<String> topics = log.getTopics();
         List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonPlayers.PLAYERPRIMARYWALLETSET_EVENT.getNonIndexedParameters());
@@ -127,7 +127,7 @@ public class Players {
         String playerUUID = (String) data.get(0).getValue();
         Address walletAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), new TypeReference<Address>(false) {});
 
-        if (debug) Bukkit.getLogger().log(Level.INFO, "Primary wallet of uuid " + playerUUID + " set to " + walletAddress);
+        if (debug) NFTWorlds.getInstance().getLogger().log(Level.INFO, "Primary wallet of uuid " + playerUUID + " set to " + walletAddress);
 
         UUID uuid = java.util.UUID.fromString (playerUUID.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)","$1-$2-$3-$4-$5"));
         NFTPlayer nftPlayer = NFTPlayer.getByUUID(uuid);
@@ -142,7 +142,7 @@ public class Players {
     }
 
     public void paymentListener_handleSecondaryWalletSetEvent(Log log) {
-        if (debug) Bukkit.getLogger().log(Level.INFO, "Secondary wallet updated (addition)");
+        if (debug) NFTWorlds.getInstance().getLogger().log(Level.INFO, "Secondary wallet updated (addition)");
 
         List<String> topics = log.getTopics();
         List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonPlayers.PLAYERSECONDARYWALLETSET_EVENT.getNonIndexedParameters());
@@ -150,7 +150,7 @@ public class Players {
         String playerUUID = (String) data.get(0).getValue();
         Address walletAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), new TypeReference<Address>(false) {});
 
-        if (debug) Bukkit.getLogger().log(Level.INFO, "Added secondary wallet of " +  walletAddress.toString() + " to uuid " + playerUUID);
+        if (debug) NFTWorlds.getInstance().getLogger().log(Level.INFO, "Added secondary wallet of " +  walletAddress.toString() + " to uuid " + playerUUID);
 
         UUID uuid = java.util.UUID.fromString (playerUUID.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)","$1-$2-$3-$4-$5"));
         NFTPlayer nftPlayer = NFTPlayer.getByUUID(uuid);
@@ -165,7 +165,7 @@ public class Players {
     }
 
     public void paymentListener_handleSecondaryWalletRemovedEvent(Log log) {
-        if (debug) Bukkit.getLogger().log(Level.INFO, "Secondary wallet updated (removal)");
+        if (debug) NFTWorlds.getInstance().getLogger().log(Level.INFO, "Secondary wallet updated (removal)");
 
         List<String> topics = log.getTopics();
         List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonPlayers.PLAYERSECONDARYWALLETREMOVED_EVENT.getNonIndexedParameters());
@@ -173,7 +173,7 @@ public class Players {
         String playerUUID = (String) data.get(0).getValue();
         Address walletAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), new TypeReference<Address>(false) {});
 
-        if (debug) Bukkit.getLogger().log(Level.INFO, "Removed secondary wallet of " +  walletAddress.toString() + " from uuid " + playerUUID);
+        if (debug) NFTWorlds.getInstance().getLogger().log(Level.INFO, "Removed secondary wallet of " +  walletAddress.toString() + " from uuid " + playerUUID);
 
         UUID uuid = java.util.UUID.fromString (playerUUID.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)","$1-$2-$3-$4-$5"));
         NFTPlayer nftPlayer = NFTPlayer.getByUUID(uuid);

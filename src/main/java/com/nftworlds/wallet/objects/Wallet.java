@@ -154,7 +154,7 @@ public class Wallet {
         return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
     }
 
-    public boolean doesPlayerOwnNFTInCollection(Network network, String contractAddress) throws IOException, InterruptedException {
+    public boolean doesPlayerOwnNFTInCollection(Network network, String contractAddress) {
         String baseURL;
         if (network.equals(Network.ETHEREUM)) {
             baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
@@ -164,9 +164,14 @@ public class Wallet {
             return false;
         }
         String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses=" + contractAddress;
-        JSONObject payload = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
-        JSONArray ownedNFTs = (JSONArray) payload.get("ownedNfts");
-        return ownedNFTs.length() > 0;
+        try {
+            JSONObject payload = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
+            JSONArray ownedNFTs = (JSONArray) payload.get("ownedNfts");
+            return ownedNFTs.length() > 0;
+        } catch (Exception e) {
+            NFTWorlds.getInstance().getLogger().info("Error when parsing response from " + url);
+        }
+        return false;
     }
 
     /**
@@ -227,9 +232,12 @@ public class Wallet {
      * @param reason
      */
     public void payWRLD(double amount, Network network, String reason) {
-        if (!NFTPlayer.getByUUID(getAssociatedPlayer()).isLinked()) return;
+        if (!NFTPlayer.getByUUID(getAssociatedPlayer()).isLinked()) {
+            NFTWorlds.getInstance().getLogger().warning("Skipped outgoing transaction because wallet was not linked!");
+            return;
+        }
         if (!network.equals(Network.POLYGON)) {
-            Bukkit.getLogger().warning("Attempted to call Wallet.payWRLD with unsupported network. " +
+            NFTWorlds.getInstance().getLogger().warning("Attempted to call Wallet.payWRLD with unsupported network. " +
                     "Only Polygon is supported in this plugin at the moment.");
             return;
         }
@@ -238,18 +246,42 @@ public class Wallet {
         Player paidPlayer = Objects.requireNonNull(Bukkit.getPlayer(this.getAssociatedPlayer()));
         paidPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                 new TextComponent(ChatColor.DARK_GREEN + "Incoming " + amount + " WRLD payment pending"));
-        try {
-            final PolygonWRLDToken polygonWRLDTokenContract = NFTWorlds.getInstance().getWrld().getPolygonWRLDTokenContract();
-            polygonWRLDTokenContract.transfer(this.getAddress(), sending.toBigInteger()).sendAsync().thenAccept((c) -> {
+
+        if (NFTWorlds.getInstance().getNftConfig().isUseHotwalletForOutgoingTransactions()) {
+            // TODO: Add support for other outgoing currencies through Hotwallet.
+            JSONObject json = new JSONObject();
+            json.put("network", "Polygon");
+            json.put("token", "POLYGON_WRLD");
+            json.put("recipient_address", this.getAddress());
+            json.put("amount", sending.toBigInteger());
+            String requestBody = json.toString();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(NFTWorlds.getInstance().getNftConfig().getHotwalletHttpsEndpoint() + "/send_tokens"))
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+            try {
+                JSONObject response = new JSONObject(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).body());
                 paidPlayer.sendMessage(
                         ChatColor.translateAlternateColorCodes('&',
-                                "&6You've been paid! &7Reason&f: " + reason + "\n" +
-                                        "&a&nhttps://polygonscan.com/tx/" +
-                                        c.getTransactionHash() + "&r\n "));
-            });
-        } catch (Exception e) {
-            Bukkit.getLogger().warning("caught error in payWrld:");
-            e.printStackTrace();
+                                "&6You've been sent " + amount + " WRLD! &7Reason&f: " + reason));
+                NFTWorlds.getInstance().getLogger().info(response.toString());
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                final PolygonWRLDToken polygonWRLDTokenContract = NFTWorlds.getInstance().getWrld().getPolygonWRLDTokenContract();
+                polygonWRLDTokenContract.transfer(this.getAddress(), sending.toBigInteger()).sendAsync().thenAccept((c) -> {
+                    paidPlayer.sendMessage(
+                            ChatColor.translateAlternateColorCodes('&',
+                                    "&6You've been paid! &7Reason&f: " + reason + "\n" +
+                                            "&a&nhttps://polygonscan.com/tx/" +
+                                            c.getTransactionHash() + "&r\n "));
+                });
+            } catch (Exception e) {
+                NFTWorlds.getInstance().getLogger().warning("caught error in payWrld:");
+                e.printStackTrace();
+            }
         }
     }
 

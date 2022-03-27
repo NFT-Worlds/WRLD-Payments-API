@@ -1,8 +1,17 @@
 polygon_https_rpc: ""
 ethereum_https_rpc: ""
 server_wallet_address: "0x2a52d32b2fB09492ddE1CA2c36E1c69531664461"
-# Starting with 0x.
+
+# Server operators have two options for outgoing payments:
+# 1: Putting an Ethereum private key directly on your game server.
+# Pros: simple, easy. Cons: plugins or exploits could steal your key. The same wallet cannot be used across multiple nodes.
 server_wallet_private_key: ""
+# 2. EconomyKit Hotwallet API for web3 game servers.
+# Pros: Avoids keeping Eth private keys on game servers and allows you to share a single wallet across servers.
+# Cons: Requires registration.
+hotwallet_https_endpoint: ""
+# Only fill in server_wallet_private_key OR hotwallet_https_api.
+
 contracts:
   polygon_player_contract: "0xF405Fb60690395D8d4d047Cc8916Df256270285f"
   polygon_wrld_contract: "0xD5d86FC8d5C0Ea1aC1Ac5Dfab6E529c9967a45E9"
