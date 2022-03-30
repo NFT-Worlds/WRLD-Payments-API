@@ -150,7 +150,7 @@ public class Wallet {
         } else {
             return null;
         }
-        String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses=" + contractAddress;
+        String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses[]=" + contractAddress;
         return new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
     }
 
@@ -163,7 +163,7 @@ public class Wallet {
         } else {
             return false;
         }
-        String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses=" + contractAddress;
+        String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses[]=" + contractAddress;
         try {
             JSONObject payload = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
             JSONArray ownedNFTs = (JSONArray) payload.get("ownedNfts");
