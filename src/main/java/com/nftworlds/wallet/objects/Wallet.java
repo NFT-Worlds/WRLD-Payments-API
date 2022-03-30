@@ -164,6 +164,7 @@ public class Wallet {
             return false;
         }
         String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses[]=" + contractAddress;
+        NFTWorlds.getInstance().getLogger().info("Performing NFT lookup with URL " + baseURL);
         try {
             JSONObject payload = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
             JSONArray ownedNFTs = (JSONArray) payload.get("ownedNfts");
