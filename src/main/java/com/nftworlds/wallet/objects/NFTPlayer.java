@@ -42,13 +42,6 @@ public class NFTPlayer {
         }
 
         players.put(uuid, this);
-
-        // TODO: replace this with some proper technique using polling or a synchronized block.
-        Bukkit.getScheduler().runTaskLater(NFTWorlds.getInstance(), () -> {
-            new PlayerWalletReadyEvent(
-                    Objects.requireNonNull(Bukkit.getPlayer(uuid))
-            ).callEvent();
-        }, 25L);
     }
 
     /**

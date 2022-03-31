@@ -1,6 +1,7 @@
 package com.nftworlds.wallet.listeners;
 
 import com.nftworlds.wallet.NFTWorlds;
+import com.nftworlds.wallet.event.PlayerWalletReadyEvent;
 import com.nftworlds.wallet.objects.NFTPlayer;
 import com.nftworlds.wallet.qrmaps.QRMapManager;
 import org.bukkit.Bukkit;
@@ -11,10 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener {
@@ -26,12 +24,18 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onJoin(AsyncPlayerPreLoginEvent event) {
+    public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         new NFTPlayer(event.getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void postJoin(PlayerJoinEvent event) {
+    public void onPlayerLogin(PlayerLoginEvent event) {
+        new PlayerWalletReadyEvent(event.getPlayer())
+                .callEvent();
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         if (!NFTPlayer.getByUUID(p.getUniqueId()).isLinked()) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -43,7 +47,7 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         NFTPlayer.remove(event.getPlayer().getUniqueId());
         restoreItemReplacedWithMap(event.getPlayer());
     }
