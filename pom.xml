@@ -11,6 +11,17 @@
 
     <name>wrld-payments-api</name>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>metacrafters-snapshots</id>
+            <url>https://nexus.metacrafters.dev/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>metacrafters-releases</id>
+            <url>https://nexus.metacrafters.dev/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
+
     <description>NFT Worlds Wallet API</description>
     <properties>
         <java.version>16</java.version>
@@ -143,12 +154,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>worldql-partners-releases</id>
-            <name>WorldQL Partners Repository</name>
-            <url>https://maven.worldql.com/releases</url>
-        </repository>
-    </distributionManagement>
 </project>
