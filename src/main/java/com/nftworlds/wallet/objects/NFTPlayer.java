@@ -43,12 +43,17 @@ public class NFTPlayer {
 
         players.put(uuid, this);
 
-        // TODO: replace this with some proper technique using polling or a synchronized block.
-        Bukkit.getScheduler().runTaskLater(NFTWorlds.getInstance(), () -> {
-            new PlayerWalletReadyEvent(
-                    Objects.requireNonNull(Bukkit.getPlayer(uuid))
-            ).callEvent();
-        }, 25L);
+        // Player shouldn't be null at this point. Still going to run check for peace of mind
+        // Idk if you wanted this event to be thread safe or not. Just being safe.
+        
+        new BukkitRunnable() {
+        	@Override
+        	public void run() {
+                new PlayerWalletReadyEvent(
+                        Objects.requireNonNull(Bukkit.getPlayer(uuid))
+                ).callEvent();
+        	}
+        }.runTask(NFTWorlds.getInstance());
     }
 
     /**

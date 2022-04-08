@@ -25,21 +25,31 @@ public class PlayerListener implements Listener {
         this.plugin = NFTWorlds.getInstance();
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    // No need to retrieve the wallet here tbh just do regular player join.
+    // Async event is called when player is rejected such as from a ban or a whitelist
+    
+    /*@EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(AsyncPlayerPreLoginEvent event) {
         new NFTPlayer(event.getUniqueId());
     }
+    */
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void postJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if (!NFTPlayer.getByUUID(p.getUniqueId()).isLinked()) {
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                if (!p.isOnline()) return;
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', " \n&f&lIMPORTANT: &cYou do not have a wallet linked!\n&7Link your wallet at &a&nhttps://nftworlds.com/login&r\n "));
-                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
-            }, 20L);
-        }
+        new BukkitRunnable() {
+        	@Override
+        	public void run() {
+                new NFTPlayer(p.getUniqueId());
+                if (!NFTPlayer.getByUUID(p.getUniqueId()).isLinked()) {
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        if (!p.isOnline()) return;
+                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', " \n&f&lIMPORTANT: &cYou do not have a wallet linked!\n&7Link your wallet at &a&nhttps://nftworlds.com/login&r\n "));
+                        p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+                    }, 20L);
+                }
+        	}
+        }.runTaskAsynchronously(plugin);
     }
 
     @EventHandler
