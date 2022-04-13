@@ -7,6 +7,7 @@ import com.nftworlds.wallet.event.PlayerWalletReadyEvent;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.util.*;
