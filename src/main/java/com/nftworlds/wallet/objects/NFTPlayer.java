@@ -7,6 +7,7 @@ import com.nftworlds.wallet.event.PlayerWalletReadyEvent;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.util.*;
@@ -42,13 +43,6 @@ public class NFTPlayer {
         }
 
         players.put(uuid, this);
-
-        // TODO: replace this with some proper technique using polling or a synchronized block.
-        Bukkit.getScheduler().runTaskLater(NFTWorlds.getInstance(), () -> {
-            new PlayerWalletReadyEvent(
-                    Objects.requireNonNull(Bukkit.getPlayer(uuid))
-            ).callEvent();
-        }, 25L);
     }
 
     /**

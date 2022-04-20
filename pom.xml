@@ -153,5 +153,12 @@
             <version>2.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.iridium</groupId>
+            <artifactId>IridiumColorAPI</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/IridiumColorAPI-1.0.5.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>
