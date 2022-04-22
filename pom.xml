@@ -73,6 +73,11 @@
     </build>
 
     <repositories>
+        <!-- Include unofficial repository for IridiumColorAPI-->
+        <repository>
+            <id>2lstudios</id>
+            <url>https://ci.2lstudios.dev/plugin/repository/everything/</url>
+        </repository>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -141,12 +146,11 @@
             <version>2.0.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!--Change it to use as compile-->
         <dependency>
             <groupId>com.iridium</groupId>
             <artifactId>IridiumColorAPI</artifactId>
-            <version>LATEST</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/IridiumColorAPI-1.0.5.jar</systemPath>
+            <version>1.0.6</version>
         </dependency>
     </dependencies>
 
