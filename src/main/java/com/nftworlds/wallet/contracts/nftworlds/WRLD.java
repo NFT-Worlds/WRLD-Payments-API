@@ -6,7 +6,6 @@ import com.nftworlds.wallet.contracts.wrappers.ethereum.EthereumWRLDToken;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
 import com.nftworlds.wallet.event.PeerToPeerPayEvent;
 import com.nftworlds.wallet.event.PlayerTransactEvent;
-import com.nftworlds.wallet.objects.NFTPlayer;
 import com.nftworlds.wallet.objects.Network;
 import com.nftworlds.wallet.objects.TransactionObjects;
 import com.nftworlds.wallet.objects.Wallet;
@@ -31,8 +30,6 @@ import org.web3j.utils.Convert;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
@@ -181,7 +178,8 @@ public class WRLD {
             PeerToPeerPayment peerToPeerPayment = PeerToPeerPayment.getPayment(ref, Network.POLYGON);
 
             if (peerToPeerPayment != null) {
-                if (debug) NFTWorlds.getInstance().getLogger().log(Level.INFO, "Transfer found in peer to peer payments");
+                if (debug)
+                    NFTWorlds.getInstance().getLogger().log(Level.INFO, "Transfer found in peer to peer payments");
                 if (debug)
                     NFTWorlds.getInstance().getLogger().log(Level.INFO, "Requested: " + peerToPeerPayment.getAmount() + ", Received: " + received);
 
@@ -213,12 +211,13 @@ public class WRLD {
     }
 
     private void paymentListener_handleTransferEvent(Log log) {
-        if (debug) NFTWorlds.getInstance().getLogger().log(Level.INFO, "Payment detected");
+        NFTWorlds plugin = NFTWorlds.getInstance();
+
+        if (debug) plugin.getLogger().log(Level.INFO, "Payment detected");
 
         List<String> topics = log.getTopics();
         List<Type> data = FunctionReturnDecoder.decode(log.getData(), PolygonWRLDToken.TRANSFER_EVENT.getNonIndexedParameters());
-        TypeReference<Address> addressTypeReference = new TypeReference<Address>() {
-        };
+        TypeReference<Address> addressTypeReference = new TypeReference<>() {};
 
         Address fromAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(1), addressTypeReference);
         Address toAddress = (Address) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), addressTypeReference);
@@ -226,32 +225,17 @@ public class WRLD {
         double received = Convert.fromWei(amount.getValue().toString(), Convert.Unit.ETHER).doubleValue();
 
         if (debug)
-            NFTWorlds.getInstance().getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD from " + fromAddress.toString() + " to " + toAddress.toString() + " . Updating balances.");
+            plugin.getLogger().log(Level.INFO, "Transfer of " + received + " $WRLD from " + fromAddress.toString() + " to " + toAddress.toString() + " . Updating balances.");
 
-        boolean foundSender = false;
-        boolean foundReceiver = false;
+        Wallet fromWallet = plugin.getWallet(fromAddress.toString());
+        if (fromWallet != null) {
+            fromWallet.setPolygonWRLDBalance(fromWallet.getPolygonWRLDBalance() - received);
+        }
 
-        for (Map.Entry<UUID, NFTPlayer> entry : NFTPlayer.getPlayers().entrySet()) {
-            NFTPlayer nftPlayer = entry.getValue();
-            for (Wallet wallet : nftPlayer.getWallets()) {
-                if (wallet.getAddress().equalsIgnoreCase(fromAddress.toString())) {
-                    wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() - received);
-                    foundSender = true;
-                }
-
-                if (wallet.getAddress().equalsIgnoreCase(toAddress.toString())) {
-                    wallet.setPolygonWRLDBalance(wallet.getPolygonWRLDBalance() + received);
-                    foundReceiver = true;
-                }
-
-                if (foundSender && foundReceiver) {
-                    break;
-                }
-            }
-
-            if (foundSender && foundReceiver) {
-                break;
-            }
+        Wallet toWallet = plugin.getWallet(toAddress.toString());
+        if (toWallet != null) {
+            toWallet.setPolygonWRLDBalance(toWallet.getPolygonWRLDBalance() + received);
         }
     }
+
 }

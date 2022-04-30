@@ -2,25 +2,24 @@ package com.nftworlds.wallet.objects;
 
 import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.contracts.nftworlds.Players;
-import com.nftworlds.wallet.event.PlayerTransactEvent;
-import com.nftworlds.wallet.event.PlayerWalletReadyEvent;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NFTPlayer {
 
     @Getter
-    private static ConcurrentHashMap<UUID, NFTPlayer> players = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<UUID, NFTPlayer> players = new ConcurrentHashMap<>();
 
     @Getter
-    private UUID uuid;
-    private List<Wallet> wallets;
+    private final UUID uuid;
+    private final List<Wallet> wallets;
     private boolean linked = false;
 
     @SneakyThrows
@@ -37,9 +36,9 @@ public class NFTPlayer {
         }
 
         wallets = new ArrayList<>();
-        wallets.add(new Wallet(uuid, primary));
+        wallets.add(new Wallet(this, primary));
         for (String wallet : secondary) {
-            wallets.add(new Wallet(uuid, wallet));
+            wallets.add(new Wallet(this, wallet));
         }
 
         players.put(uuid, this);
@@ -109,8 +108,28 @@ public class NFTPlayer {
         return linked;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        NFTPlayer player = (NFTPlayer) object;
+        return Objects.equals(uuid, player.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return uuid != null ? uuid.hashCode() : 0;
+    }
+
     public static void remove(UUID uuid) {
-        players.remove(uuid);
+        NFTPlayer player = players.remove(uuid);
+        if (player != null) {
+            NFTWorlds plugin = NFTWorlds.getInstance();
+            for (Wallet wallet : player.wallets) {
+                plugin.removeWallet(wallet);
+            }
+        }
     }
 
     public static NFTPlayer getByUUID(UUID uuid) {
