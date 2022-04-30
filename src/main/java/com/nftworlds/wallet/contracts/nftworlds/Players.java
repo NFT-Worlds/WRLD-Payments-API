@@ -135,10 +135,7 @@ public class Players {
         UUID uuid = java.util.UUID.fromString (playerUUID.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)","$1-$2-$3-$4-$5"));
         NFTPlayer nftPlayer = NFTPlayer.getByUUID(uuid);
         if (nftPlayer != null) {
-            Wallet previousWallet = nftPlayer.getWallets().set(0, new Wallet(nftPlayer, walletAddress.getValue()));
-            if (previousWallet != null) {
-                plugin.removeWallet(previousWallet);
-            }
+            nftPlayer.setPrimaryWallet(new Wallet(nftPlayer, walletAddress.getValue()));
 
             Player p = Bukkit.getPlayer(uuid);
             if (p.isOnline()) {

@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class NFTPlayer {
 
+    private static final String EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+
     @Getter
     private static final ConcurrentHashMap<UUID, NFTPlayer> players = new ConcurrentHashMap<>();
 
@@ -31,9 +33,7 @@ public class NFTPlayer {
         String primary = playerContract.getPlayerPrimaryWallet(uuid.toString().replace("-", ""));
         List<String> secondary = playerContract.getPlayerSecondaryWallets(uuid.toString().replace("-", ""));
 
-        if (!primary.equalsIgnoreCase("0x0000000000000000000000000000000000000000")) {
-            linked = true;
-        }
+        linked = !primary.equalsIgnoreCase(EMPTY_ADDRESS);
 
         wallets = new ArrayList<>();
         wallets.add(new Wallet(this, primary));
@@ -60,6 +60,14 @@ public class NFTPlayer {
      */
     public Wallet getPrimaryWallet() {
         return wallets.get(0);
+    }
+
+    public void setPrimaryWallet(Wallet wallet) {
+        Wallet previousWallet = wallets.set(0, wallet);
+        if (previousWallet != null) {
+            NFTWorlds.getInstance().removeWallet(previousWallet);
+        }
+        linked = !wallet.getAddress().equalsIgnoreCase(EMPTY_ADDRESS);
     }
 
     /**
