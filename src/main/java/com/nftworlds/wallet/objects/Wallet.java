@@ -81,11 +81,6 @@ public class Wallet {
         NFTWorlds.getInstance().addWallet(this);
     }
 
-    @Deprecated
-    public UUID getAssociatedPlayer() {
-        return owner.getUuid();
-    }
-
     /**
      * Get the wallet's WRLD balance
      */
@@ -238,7 +233,7 @@ public class Wallet {
      * @param reason
      */
     public void payWRLD(double amount, Network network, String reason) {
-        if (!NFTPlayer.getByUUID(getAssociatedPlayer()).isLinked()) {
+        if (!owner.isLinked()) {
             NFTWorlds.getInstance().getLogger().warning("Skipped outgoing transaction because wallet was not linked!");
             return;
         }
@@ -249,7 +244,7 @@ public class Wallet {
         }
 
         BigDecimal sending = Convert.toWei(BigDecimal.valueOf(amount), Convert.Unit.ETHER);
-        Player paidPlayer = Objects.requireNonNull(Bukkit.getPlayer(this.getAssociatedPlayer()));
+        Player paidPlayer = Objects.requireNonNull(Bukkit.getPlayer(owner.getUuid()));
         paidPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                 new TextComponent(ChatColor.DARK_GREEN + "Incoming " + amount + " WRLD payment pending"));
 
