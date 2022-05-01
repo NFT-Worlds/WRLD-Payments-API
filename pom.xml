@@ -95,6 +95,10 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>2lstudios</id>
+            <url>https://ci.2lstudios.dev/plugin/repository/everything/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -144,9 +148,8 @@
         <dependency>
             <groupId>com.iridium</groupId>
             <artifactId>IridiumColorAPI</artifactId>
-            <version>LATEST</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/IridiumColorAPI-1.0.5.jar</systemPath>
+            <version>1.0.6</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
