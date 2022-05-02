@@ -1,6 +1,5 @@
 package com.nftworlds.wallet;
 
-import com.nftworlds.wallet.api.WalletAPI;
 import com.nftworlds.wallet.commands.WalletGUICommand;
 import com.nftworlds.wallet.config.Config;
 import com.nftworlds.wallet.contracts.nftworlds.Players;
@@ -9,6 +8,7 @@ import com.nftworlds.wallet.handlers.TimeoutHandler;
 import com.nftworlds.wallet.listeners.PlayerListener;
 import com.nftworlds.wallet.menus.WalletGUI;
 import com.nftworlds.wallet.objects.NFTPlayer;
+import com.nftworlds.wallet.objects.Wallet;
 import com.nftworlds.wallet.rpcs.Ethereum;
 import com.nftworlds.wallet.rpcs.Polygon;
 import lombok.Getter;
@@ -16,6 +16,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.h2.value.CaseInsensitiveConcurrentMap;
+
+import java.util.Map;
 
 public class NFTWorlds extends JavaPlugin {
     private static NFTWorlds plugin;
@@ -29,6 +32,8 @@ public class NFTWorlds extends JavaPlugin {
     //RPCs
     @Getter private Polygon polygonRPC;
     @Getter private Ethereum ethereumRPC;
+
+    private final Map<String, Wallet> wallets = new CaseInsensitiveConcurrentMap<>();
 
     public void onEnable() {
         plugin = this;
@@ -67,6 +72,18 @@ public class NFTWorlds extends JavaPlugin {
 
     public void registerCommands() {
         getCommand("wallet").setExecutor(new WalletGUICommand());
+    }
+
+    public void addWallet(Wallet wallet) {
+        wallets.put(wallet.getAddress(), wallet);
+    }
+
+    public Wallet getWallet(String address) {
+        return wallets.get(address);
+    }
+
+    public void removeWallet(Wallet wallet) {
+        wallets.remove(wallet.getAddress(), wallet);
     }
 
     public static NFTWorlds getInstance() {

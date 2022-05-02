@@ -2,25 +2,26 @@ package com.nftworlds.wallet.objects;
 
 import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.contracts.nftworlds.Players;
-import com.nftworlds.wallet.event.PlayerTransactEvent;
-import com.nftworlds.wallet.event.PlayerWalletReadyEvent;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NFTPlayer {
 
-    @Getter
-    private static ConcurrentHashMap<UUID, NFTPlayer> players = new ConcurrentHashMap<>();
+    private static final String EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
     @Getter
-    private UUID uuid;
-    private List<Wallet> wallets;
+    private static final ConcurrentHashMap<UUID, NFTPlayer> players = new ConcurrentHashMap<>();
+
+    @Getter
+    private final UUID uuid;
+    private final List<Wallet> wallets;
     private boolean linked = false;
 
     @SneakyThrows
@@ -32,14 +33,12 @@ public class NFTPlayer {
         String primary = playerContract.getPlayerPrimaryWallet(uuid.toString().replace("-", ""));
         List<String> secondary = playerContract.getPlayerSecondaryWallets(uuid.toString().replace("-", ""));
 
-        if (!primary.equalsIgnoreCase("0x0000000000000000000000000000000000000000")) {
-            linked = true;
-        }
+        linked = !primary.equalsIgnoreCase(EMPTY_ADDRESS);
 
         wallets = new ArrayList<>();
-        wallets.add(new Wallet(uuid, primary));
+        wallets.add(new Wallet(this, primary));
         for (String wallet : secondary) {
-            wallets.add(new Wallet(uuid, wallet));
+            wallets.add(new Wallet(this, wallet));
         }
 
         players.put(uuid, this);
@@ -61,6 +60,14 @@ public class NFTPlayer {
      */
     public Wallet getPrimaryWallet() {
         return wallets.get(0);
+    }
+
+    public void setPrimaryWallet(Wallet wallet) {
+        Wallet previousWallet = wallets.set(0, wallet);
+        if (previousWallet != null) {
+            NFTWorlds.getInstance().removeWallet(previousWallet);
+        }
+        linked = !wallet.getAddress().equalsIgnoreCase(EMPTY_ADDRESS);
     }
 
     /**
@@ -109,8 +116,28 @@ public class NFTPlayer {
         return linked;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        NFTPlayer player = (NFTPlayer) object;
+        return Objects.equals(uuid, player.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return uuid != null ? uuid.hashCode() : 0;
+    }
+
     public static void remove(UUID uuid) {
-        players.remove(uuid);
+        NFTPlayer player = players.remove(uuid);
+        if (player != null) {
+            NFTWorlds plugin = NFTWorlds.getInstance();
+            for (Wallet wallet : player.wallets) {
+                plugin.removeWallet(wallet);
+            }
+        }
     }
 
     public static NFTPlayer getByUUID(UUID uuid) {
