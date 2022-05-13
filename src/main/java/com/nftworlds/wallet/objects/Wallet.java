@@ -3,6 +3,7 @@ package com.nftworlds.wallet.objects;
 import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.contracts.wrappers.common.ERC20;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
+import com.nftworlds.wallet.event.AsyncPlayerPaidFromServerWalletEvent;
 import com.nftworlds.wallet.objects.payments.PaymentRequest;
 import com.nftworlds.wallet.objects.payments.PeerToPeerPayment;
 import com.nftworlds.wallet.qrmaps.LinkUtils;
@@ -273,11 +274,16 @@ public class Wallet {
             try {
                 final PolygonWRLDToken polygonWRLDTokenContract = NFTWorlds.getInstance().getWrld().getPolygonWRLDTokenContract();
                 polygonWRLDTokenContract.transfer(this.getAddress(), sending.toBigInteger()).sendAsync().thenAccept((c) -> {
-                    paidPlayer.sendMessage(
-                            ChatColor.translateAlternateColorCodes('&',
-                                    "&6You've been paid! &7Reason&f: " + reason + "\n" +
-                                            "&a&nhttps://polygonscan.com/tx/" +
-                                            c.getTransactionHash() + "&r\n "));
+                    AsyncPlayerPaidFromServerWalletEvent walletEvent = new AsyncPlayerPaidFromServerWalletEvent(paidPlayer, amount, network, reason);
+
+                    if (walletEvent.isDefaultReceiveMessage()) {
+                        paidPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                "&6You've been paid! &7Reason&f: " + reason + "\n" +
+                                        "&a&nhttps://polygonscan.com/tx/" +
+                                        c.getTransactionHash() + "&r\n "));
+                    }
+
+                    walletEvent.callEvent();
                 });
             } catch (Exception e) {
                 NFTWorlds.getInstance().getLogger().warning("caught error in payWrld:");
