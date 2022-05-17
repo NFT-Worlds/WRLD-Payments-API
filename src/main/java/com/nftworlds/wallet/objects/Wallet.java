@@ -274,16 +274,14 @@ public class Wallet {
             try {
                 final PolygonWRLDToken polygonWRLDTokenContract = NFTWorlds.getInstance().getWrld().getPolygonWRLDTokenContract();
                 polygonWRLDTokenContract.transfer(this.getAddress(), sending.toBigInteger()).sendAsync().thenAccept((c) -> {
-                    AsyncPlayerPaidFromServerWalletEvent walletEvent = new AsyncPlayerPaidFromServerWalletEvent(paidPlayer, amount, network, reason);
+                    final String receiptLink = "https://polygonscan.com/tx/" + c.getTransactionHash();
+                    AsyncPlayerPaidFromServerWalletEvent walletEvent = new AsyncPlayerPaidFromServerWalletEvent(paidPlayer, amount, network, reason, c, receiptLink);
+                    walletEvent.callEvent();
 
                     if (walletEvent.isDefaultReceiveMessage()) {
                         paidPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                "&6You've been paid! &7Reason&f: " + reason + "\n" +
-                                        "&a&nhttps://polygonscan.com/tx/" +
-                                        c.getTransactionHash() + "&r\n "));
+                                "&6You've been paid! &7Reason:&f: " + reason + "\n &a&n" + receiptLink + "&r\n"));
                     }
-
-                    walletEvent.callEvent();
                 });
             } catch (Exception e) {
                 NFTWorlds.getInstance().getLogger().warning("caught error in payWrld:");
