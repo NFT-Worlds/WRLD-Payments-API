@@ -138,7 +138,7 @@ public class Players {
             nftPlayer.setPrimaryWallet(new Wallet(nftPlayer, walletAddress.getValue()));
 
             Player p = Bukkit.getPlayer(uuid);
-            if (p.isOnline()) {
+            if (p != null && p.isOnline()) {
                 p.sendMessage(ChatColor.translateAlternateColorCodes('&', " \n&7Your primary wallet has been set to &a" + walletAddress.getValue() + "&r\n "));
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
             }
