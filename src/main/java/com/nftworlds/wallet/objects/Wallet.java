@@ -263,10 +263,16 @@ public class Wallet {
                     .build();
             try {
                 JSONObject response = new JSONObject(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).body());
-                paidPlayer.sendMessage(
-                        ChatColor.translateAlternateColorCodes('&',
-                                "&6You've been sent " + amount + " WRLD! &7Reason&f: " + reason));
-                NFTWorlds.getInstance().getLogger().info(response.toString());
+                final String receiptLink = "https://app.economykit.com/hotwallet/transaction/" + response.getInt("outgoing_tx_id");
+                Bukkit.getScheduler().runTaskAsynchronously(NFTWorlds.getInstance(), () -> {
+                    AsyncPlayerPaidFromServerWalletEvent walletEvent = new AsyncPlayerPaidFromServerWalletEvent(paidPlayer, amount, network, reason, receiptLink);
+                    walletEvent.callEvent();
+
+                    if (walletEvent.isDefaultReceiveMessage()) {
+                        paidPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                "&6You've been paid! &7Reason:&f: " + reason + "\n &a&n" + receiptLink + "&r\n"));
+                    }
+                });
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -275,7 +281,7 @@ public class Wallet {
                 final PolygonWRLDToken polygonWRLDTokenContract = NFTWorlds.getInstance().getWrld().getPolygonWRLDTokenContract();
                 polygonWRLDTokenContract.transfer(this.getAddress(), sending.toBigInteger()).sendAsync().thenAccept((c) -> {
                     final String receiptLink = "https://polygonscan.com/tx/" + c.getTransactionHash();
-                    AsyncPlayerPaidFromServerWalletEvent walletEvent = new AsyncPlayerPaidFromServerWalletEvent(paidPlayer, amount, network, reason, c, receiptLink);
+                    AsyncPlayerPaidFromServerWalletEvent walletEvent = new AsyncPlayerPaidFromServerWalletEvent(paidPlayer, amount, network, reason, receiptLink);
                     walletEvent.callEvent();
 
                     if (walletEvent.isDefaultReceiveMessage()) {
