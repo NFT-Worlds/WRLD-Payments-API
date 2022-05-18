@@ -61,6 +61,27 @@ public class Wallet {
     @Getter
     private static HashMap<String, Double> customEthereumBalances = new HashMap<>();
 
+    public Wallet(UUID uuid, String address) {
+        this.owner = NFTPlayer.getByUUID(uuid);
+        this.address = address;
+
+        //Get balance initially
+        double polygonBalance = 0;
+        double ethereumBalance = 0;
+        try {
+            BigInteger bigIntegerPoly = NFTWorlds.getInstance().getWrld().getPolygonBalance(address);
+            BigInteger bigIntegerEther = NFTWorlds.getInstance().getWrld().getEthereumBalance(address);
+            polygonBalance = Convert.fromWei(bigIntegerPoly.toString(), Convert.Unit.ETHER).doubleValue();
+            ethereumBalance = Convert.fromWei(bigIntegerEther.toString(), Convert.Unit.ETHER).doubleValue();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        this.polygonWRLDBalance = polygonBalance;
+        this.ethereumWRLDBalance = ethereumBalance;
+
+        NFTWorlds.getInstance().addWallet(this);
+    }
+
     public Wallet(NFTPlayer owner, String address) {
         this.owner = owner;
         this.address = address;
