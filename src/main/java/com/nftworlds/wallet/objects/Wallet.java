@@ -200,7 +200,7 @@ public class Wallet {
 
         try {
             BigInteger balance = erc721.balanceOf(address).send();
-            return balance.compareTo(BigInteger.ZERO) > 0; //return true if address owns more than 1 NFT
+            return balance.compareTo(BigInteger.ZERO) > 0; //return true if address owns at least 1 NFT from this contract
         } catch (Exception e) {
             e.printStackTrace();
             return false;
