@@ -2,6 +2,7 @@ package com.nftworlds.wallet.objects;
 
 import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.contracts.wrappers.common.ERC20;
+import com.nftworlds.wallet.contracts.wrappers.common.ERC721;
 import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonWRLDToken;
 import com.nftworlds.wallet.event.AsyncPlayerPaidFromServerWalletEvent;
 import com.nftworlds.wallet.objects.payments.PaymentRequest;
@@ -178,24 +179,32 @@ public class Wallet {
     }
 
     public boolean doesPlayerOwnNFTInCollection(Network network, String contractAddress) {
-        String baseURL;
+        ERC721 erc721 = null;
         if (network.equals(Network.ETHEREUM)) {
-            baseURL = NFTWorlds.getInstance().getNftConfig().getEthereumHttpsRpc();
+            erc721 = ERC721.load(
+                contractAddress,
+                NFTWorlds.getInstance().getEthereumRPC().getEthereumWeb3j(),
+                Credentials.create(NFTWorlds.getInstance().getNftConfig().getServerPrivateKey()),
+                new DefaultGasProvider()
+            );
         } else if (network.equals(Network.POLYGON)) {
-            baseURL = NFTWorlds.getInstance().getNftConfig().getPolygonHttpsRpc();
+            erc721 = ERC721.load(
+                contractAddress,
+                NFTWorlds.getInstance().getPolygonRPC().getPolygonWeb3j(),
+                Credentials.create(NFTWorlds.getInstance().getNftConfig().getServerPrivateKey()),
+                new DefaultGasProvider()
+            );
         } else {
             return false;
         }
-        String url = baseURL + "/getNFTs?owner=" + address + "&contractAddresses[]=" + contractAddress;
-        NFTWorlds.getInstance().getLogger().info("Performing NFT lookup with URL " + baseURL);
+
         try {
-            JSONObject payload = new JSONObject(HttpClient.newHttpClient().send(HttpRequest.newBuilder().uri(URI.create(url)).build(), HttpResponse.BodyHandlers.ofString()).body());
-            JSONArray ownedNFTs = (JSONArray) payload.get("ownedNfts");
-            return ownedNFTs.length() > 0;
+            BigInteger balance = erc721.balanceOf(address).send();
+            return balance.compareTo(BigInteger.ZERO) > 0; //return true if address owns at least 1 NFT from this contract
         } catch (Exception e) {
-            NFTWorlds.getInstance().getLogger().info("Error when parsing response from " + url);
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     /**
