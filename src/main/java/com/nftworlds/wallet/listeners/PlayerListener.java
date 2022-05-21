@@ -41,7 +41,7 @@ public class PlayerListener implements Listener {
         if (!NFTPlayer.getByUUID(p.getUniqueId()).isLinked()) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (!p.isOnline()) return;
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', " \n&f&lIMPORTANT: &cYou do not have a wallet linked!\n&7Link your wallet at &a&nhttps://nftworlds.com/login&r\n "));
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', NFTWorlds.getInstance().getLangConfig().getNoLinkedWallet()));
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
             }, 20L);
         }
