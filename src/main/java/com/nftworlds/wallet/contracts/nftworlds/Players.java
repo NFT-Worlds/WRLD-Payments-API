@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -139,7 +140,7 @@ public class Players {
 
             Player p = Bukkit.getPlayer(uuid);
             if (p != null && p.isOnline()) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', " \n&7Your primary wallet has been set to &a" + walletAddress.getValue() + "&r\n "));
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getSetPrimaryWallet(), walletAddress.getValue())));
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
             }
         }
@@ -162,7 +163,7 @@ public class Players {
             nftPlayer.getWallets().add(new Wallet(nftPlayer, walletAddress.getValue()));
             Player p = Bukkit.getPlayer(uuid);
             if (p.isOnline()) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', " \n&7Your secondary wallets have been updated by adding &a" + walletAddress.getValue() + "&r\n "));
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getSetSecondaryWallet(), walletAddress.getValue())));
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
             }
         }
@@ -197,7 +198,7 @@ public class Players {
 
             Player p = Bukkit.getPlayer(uuid);
             if (p != null && p.isOnline()) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', " \n&7Your secondary wallets have been updated by removing &c" + walletAddress.getValue() + "&r\n "));
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getRemoveSecondaryWallet(), walletAddress.getValue())));
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
             }
         }

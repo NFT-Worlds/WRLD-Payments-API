@@ -2,6 +2,7 @@ package com.nftworlds.wallet;
 
 import com.nftworlds.wallet.commands.WalletGUICommand;
 import com.nftworlds.wallet.config.Config;
+import com.nftworlds.wallet.config.LangConfig;
 import com.nftworlds.wallet.contracts.nftworlds.Players;
 import com.nftworlds.wallet.contracts.nftworlds.WRLD;
 import com.nftworlds.wallet.handlers.TimeoutHandler;
@@ -25,6 +26,8 @@ public class NFTWorlds extends JavaPlugin {
 
     @Getter private Config nftConfig;
 
+    @Getter private LangConfig langConfig;
+
     //Contracts
     @Getter private Players players;
     @Getter private WRLD wrld;
@@ -39,6 +42,7 @@ public class NFTWorlds extends JavaPlugin {
         plugin = this;
 
         (nftConfig = new Config()).registerConfig();
+        (langConfig = new LangConfig()).registerConfig();
 
         polygonRPC = new Polygon();
         ethereumRPC = new Ethereum();
