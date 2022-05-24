@@ -9,18 +9,17 @@ import com.nftworlds.wallet.objects.payments.PaymentRequest;
 import com.nftworlds.wallet.objects.payments.PeerToPeerPayment;
 import com.nftworlds.wallet.qrmaps.LinkUtils;
 import com.nftworlds.wallet.qrmaps.QRMapManager;
+import com.nftworlds.wallet.util.ColorUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
@@ -233,7 +232,7 @@ public class Wallet {
             view.getRenderers().clear();
 
             QRMapManager renderer = new QRMapManager();
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getIncomingRequest(), reason)));
+            player.sendMessage(ColorUtil.rgb(MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getIncomingRequest(), reason)));
             if (Bukkit.getServer().getPluginManager().getPlugin("Geyser-Spigot") != null && org.geysermc.connector.GeyserConnector.getInstance().getPlayerByUuid(player.getUniqueId()) != null) {
                 String shortLink = LinkUtils.shortenURL(paymentLink);
                 renderer.load(shortLink);
@@ -249,10 +248,10 @@ public class Wallet {
                 player.getInventory().setItem(0, map);
                 player.getInventory().setHeldItemSlot(0);
 
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', NFTWorlds.getInstance().getLangConfig().getScanQRCode()));
+                player.sendMessage(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getScanQRCode()));
 
             } else {
-                player.sendMessage(MessageFormat.format(ChatColor.translateAlternateColorCodes('&', NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
+                player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
             }
         }
     }
@@ -300,7 +299,7 @@ public class Wallet {
                     walletEvent.callEvent();
 
                     if (walletEvent.isDefaultReceiveMessage()) {
-                        paidPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                        paidPlayer.sendMessage(ColorUtil.rgb(
                                 MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getPaid(), reason, receiptLink)));
                     }
                 });
@@ -316,7 +315,7 @@ public class Wallet {
                     walletEvent.callEvent();
 
                     if (walletEvent.isDefaultReceiveMessage()) {
-                        paidPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                        paidPlayer.sendMessage(ColorUtil.rgb(
                                 MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getPaid(), reason, receiptLink)));
                     }
                 });
@@ -341,14 +340,14 @@ public class Wallet {
             Player player = Bukkit.getPlayer(owner.getUuid());
             if (player != null) {
                 if (!to.isLinked()) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', NFTWorlds.getInstance().getLangConfig().getPlayerNoLinkedWallet()));
+                    player.sendMessage(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPlayerNoLinkedWallet()));
                     return;
                 }
                 Uint256 refID = new Uint256(new BigInteger(256, new Random()));
                 long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
                 new PeerToPeerPayment(to, owner, amount, refID, network, reason, timeout);
                 String paymentLink = "https://nftworlds.com/pay/?to=" + to.getPrimaryWallet().getAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000);
-                player.sendMessage(MessageFormat.format(ChatColor.translateAlternateColorCodes('&', NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
+                player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
             }
         }
     }

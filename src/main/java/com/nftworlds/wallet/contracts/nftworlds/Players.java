@@ -5,8 +5,8 @@ import com.nftworlds.wallet.contracts.wrappers.polygon.PolygonPlayers;
 import com.nftworlds.wallet.objects.NFTPlayer;
 import com.nftworlds.wallet.objects.Wallet;
 import com.nftworlds.wallet.rpcs.Polygon;
+import com.nftworlds.wallet.util.ColorUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.json.JSONObject;
@@ -140,7 +140,7 @@ public class Players {
 
             Player p = Bukkit.getPlayer(uuid);
             if (p != null && p.isOnline()) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getSetPrimaryWallet(), walletAddress.getValue())));
+                p.sendMessage(ColorUtil.rgb(MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getSetPrimaryWallet(), walletAddress.getValue())));
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
             }
         }
@@ -163,7 +163,7 @@ public class Players {
             nftPlayer.getWallets().add(new Wallet(nftPlayer, walletAddress.getValue()));
             Player p = Bukkit.getPlayer(uuid);
             if (p.isOnline()) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getSetSecondaryWallet(), walletAddress.getValue())));
+                p.sendMessage(ColorUtil.rgb(MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getSetSecondaryWallet(), walletAddress.getValue())));
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
             }
         }
@@ -198,7 +198,7 @@ public class Players {
 
             Player p = Bukkit.getPlayer(uuid);
             if (p != null && p.isOnline()) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getRemoveSecondaryWallet(), walletAddress.getValue())));
+                p.sendMessage(ColorUtil.rgb(MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getRemoveSecondaryWallet(), walletAddress.getValue())));
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
             }
         }

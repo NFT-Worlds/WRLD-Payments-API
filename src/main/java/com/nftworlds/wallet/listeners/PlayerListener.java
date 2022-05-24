@@ -4,8 +4,8 @@ import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.event.PlayerWalletReadyEvent;
 import com.nftworlds.wallet.objects.NFTPlayer;
 import com.nftworlds.wallet.qrmaps.QRMapManager;
+import com.nftworlds.wallet.util.ColorUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerListener implements Listener {
 
@@ -41,7 +40,7 @@ public class PlayerListener implements Listener {
         if (!NFTPlayer.getByUUID(p.getUniqueId()).isLinked()) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (!p.isOnline()) return;
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', NFTWorlds.getInstance().getLangConfig().getNoLinkedWallet()));
+                p.sendMessage(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getNoLinkedWallet()));
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
             }, 20L);
         }
