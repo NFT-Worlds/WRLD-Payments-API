@@ -182,17 +182,17 @@ public class Wallet {
         ERC721 erc721 = null;
         if (network.equals(Network.ETHEREUM)) {
             erc721 = ERC721.load(
-                contractAddress,
-                NFTWorlds.getInstance().getEthereumRPC().getEthereumWeb3j(),
-                Credentials.create(NFTWorlds.getInstance().getNftConfig().getServerPrivateKey()),
-                new DefaultGasProvider()
+                    contractAddress,
+                    NFTWorlds.getInstance().getEthereumRPC().getEthereumWeb3j(),
+                    Credentials.create(NFTWorlds.getInstance().getNftConfig().getServerPrivateKey()),
+                    new DefaultGasProvider()
             );
         } else if (network.equals(Network.POLYGON)) {
             erc721 = ERC721.load(
-                contractAddress,
-                NFTWorlds.getInstance().getPolygonRPC().getPolygonWeb3j(),
-                Credentials.create(NFTWorlds.getInstance().getNftConfig().getServerPrivateKey()),
-                new DefaultGasProvider()
+                    contractAddress,
+                    NFTWorlds.getInstance().getPolygonRPC().getPolygonWeb3j(),
+                    Credentials.create(NFTWorlds.getInstance().getNftConfig().getServerPrivateKey()),
+                    new DefaultGasProvider()
             );
         } else {
             return false;
@@ -308,6 +308,7 @@ public class Wallet {
             }
         } else {
             try {
+                NFTWorlds.getInstance().getLogger().info("Sending outgoing transaction using PK to " + paidPlayer + " for " + amount);
                 final PolygonWRLDToken polygonWRLDTokenContract = NFTWorlds.getInstance().getWrld().getPolygonWRLDTokenContract();
                 polygonWRLDTokenContract.transfer(this.getAddress(), sending.toBigInteger()).sendAsync().thenAccept((c) -> {
                     final String receiptLink = "https://polygonscan.com/tx/" + c.getTransactionHash();
@@ -318,6 +319,9 @@ public class Wallet {
                         paidPlayer.sendMessage(ColorUtil.rgb(
                                 MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getPaid(), reason, receiptLink)));
                     }
+                }).exceptionally(error -> {
+                    NFTWorlds.getInstance().getLogger().warning("Caught error in transfer function exceptionally: " + error);
+                    return null;
                 });
             } catch (Exception e) {
                 NFTWorlds.getInstance().getLogger().warning("caught error in payWrld:");
