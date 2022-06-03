@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
+import org.json.HTTP;
 import org.json.JSONObject;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -143,6 +145,21 @@ public class Wallet {
             customEthereumBalances.put(tokenContract,
                     Convert.fromWei(bigInteger.toString(), Convert.Unit.ETHER).doubleValue());
         }
+    }
+
+    /**
+     * Alternative API for NFT fetching that seems to provide better data than Alchemy.
+     * Returns NFTs on both Polygon and Ethereum chains.
+     */
+    public JSONObject getOwnedNFTsByContactWithSimpleHash(String contractAddress) throws URISyntaxException, IOException, InterruptedException {
+        String url =
+                "https://api.simplehash.com/api/v0/nfts/owners?chains=polygon,ethereum&wallet_addresses=" + address +
+                        "&contract_addresses=" + contractAddress;
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(url)).header("X-API-KEY", "worldql_sk_ssga6syqc1eo5eyn")
+                .build();
+        return new JSONObject(client.send(request, HttpResponse.BodyHandlers.ofString()).body());
     }
 
     /**
