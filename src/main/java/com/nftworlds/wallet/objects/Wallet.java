@@ -250,26 +250,7 @@ public class Wallet {
 
             QRMapManager renderer = new QRMapManager();
             player.sendMessage(ColorUtil.rgb(MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getIncomingRequest(), reason)));
-            if (Bukkit.getServer().getPluginManager().getPlugin("Geyser-Spigot") != null && org.geysermc.connector.GeyserConnector.getInstance().getPlayerByUuid(player.getUniqueId()) != null) {
-                String shortLink = LinkUtils.shortenURL(paymentLink);
-                renderer.load(shortLink);
-                // TODO: Better error handling
-                view.addRenderer(renderer);
-                ItemStack map = new ItemStack(Material.FILLED_MAP);
-                MapMeta meta = (MapMeta) map.getItemMeta();
-
-                meta.setMapView(view);
-                map.setItemMeta(meta);
-
-                QRMapManager.playerPreviousItem.put(player.getUniqueId(), player.getInventory().getItem(0));
-                player.getInventory().setItem(0, map);
-                player.getInventory().setHeldItemSlot(0);
-
-                player.sendMessage(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getScanQRCode()));
-
-            } else {
-                player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
-            }
+            player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
         }
     }
 
@@ -354,8 +335,9 @@ public class Wallet {
      * @param amount
      * @param network
      * @param reason
+     * @param payload
      */
-    public void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason) {
+    public <T> void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason, T payload) {
         NFTWorlds nftWorlds = NFTWorlds.getInstance();
         if (to != null) {
             Player player = Bukkit.getPlayer(owner.getUuid());
@@ -366,7 +348,33 @@ public class Wallet {
                 }
                 Uint256 refID = new Uint256(new BigInteger(256, new Random()));
                 long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
-                new PeerToPeerPayment(to, owner, amount, refID, network, reason, timeout);
+                new PeerToPeerPayment(to, owner, amount, refID, network, reason, timeout, payload);
+                String paymentLink = "https://nftworlds.com/pay/?to=" + to.getPrimaryWallet().getAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000);
+                player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
+            }
+        }
+    }
+
+    /**
+     * Create a peer to peer payment link for player
+     *
+     * @param to
+     * @param amount
+     * @param network
+     * @param reason
+     */
+    public <T> void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason) {
+        NFTWorlds nftWorlds = NFTWorlds.getInstance();
+        if (to != null) {
+            Player player = Bukkit.getPlayer(owner.getUuid());
+            if (player != null) {
+                if (!to.isLinked()) {
+                    player.sendMessage(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPlayerNoLinkedWallet()));
+                    return;
+                }
+                Uint256 refID = new Uint256(new BigInteger(256, new Random()));
+                long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
+                new PeerToPeerPayment(to, owner, amount, refID, network, reason, timeout, null);
                 String paymentLink = "https://nftworlds.com/pay/?to=" + to.getPrimaryWallet().getAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000);
                 player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
             }

@@ -108,6 +108,19 @@ public class NFTPlayer {
     }
 
     /**
+     * Create a peer to peer player payment link
+     *
+     * @param to
+     * @param amount
+     * @param network
+     * @param reason
+     * @param payload
+     */
+    public <T> void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason, T payload) {
+        getPrimaryWallet().createPlayerPayment(to, amount, network, reason, payload);
+    }
+
+    /**
      * Check if player has their wallet linked
      *
      * @return if player has wallet linked
