@@ -250,6 +250,26 @@ public class Wallet {
 
             QRMapManager renderer = new QRMapManager();
             player.sendMessage(ColorUtil.rgb(MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getIncomingRequest(), reason)));
+            if (Bukkit.getServer().getPluginManager().getPlugin("Geyser-Spigot") != null && org.geysermc.connector.GeyserConnector.getInstance().getPlayerByUuid(player.getUniqueId()) != null) {
+                String shortLink = LinkUtils.shortenURL(paymentLink);
+                renderer.load(shortLink);
+                // TODO: Better error handling
+                view.addRenderer(renderer);
+                ItemStack map = new ItemStack(Material.FILLED_MAP);
+                MapMeta meta = (MapMeta) map.getItemMeta();
+
+                meta.setMapView(view);
+                map.setItemMeta(meta);
+
+                QRMapManager.playerPreviousItem.put(player.getUniqueId(), player.getInventory().getItem(0));
+                player.getInventory().setItem(0, map);
+                player.getInventory().setHeldItemSlot(0);
+
+                player.sendMessage(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getScanQRCode()));
+
+            } else {
+                player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
+            }
             player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
         }
     }
