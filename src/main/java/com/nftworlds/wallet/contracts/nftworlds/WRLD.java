@@ -201,7 +201,8 @@ public class WRLD {
                                     Bukkit.getPlayer(peerToPeerPayment.getFrom()),
                                     received,
                                     peerToPeerPayment.getReason(),
-                                    ref
+                                    ref,
+                                    peerToPeerPayment.getPayload()
                             ).callEvent(); //TODO: Test if works for offline players
                         }
                     });
