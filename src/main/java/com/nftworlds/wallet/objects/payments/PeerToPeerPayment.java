@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 @Getter
-public class PeerToPeerPayment {
+public class PeerToPeerPayment<T> {
 
     @Getter
     private static ArrayList<PeerToPeerPayment> peerToPeerPayments = new ArrayList<>();
@@ -21,10 +21,11 @@ public class PeerToPeerPayment {
     private Uint256 refid;
     private Network network;
     private String reason;
+    private T payload;
 
     private long timeout;
 
-    public PeerToPeerPayment(NFTPlayer to, NFTPlayer from, double amount, Uint256 refid, Network network, String reason, long timeout) {
+    public PeerToPeerPayment(NFTPlayer to, NFTPlayer from, double amount, Uint256 refid, Network network, String reason, long timeout, T payload) {
         this.to = to.getUuid();
         this.from = from.getUuid();
         this.amount = amount;
@@ -32,6 +33,7 @@ public class PeerToPeerPayment {
         this.network = network;
         this.reason = reason;
         this.timeout = timeout;
+        this.payload = payload;
         peerToPeerPayments.add(this);
     }
 
@@ -48,4 +50,7 @@ public class PeerToPeerPayment {
         return null;
     }
 
+    public T getPayload() {
+        return payload;
+    }
 }

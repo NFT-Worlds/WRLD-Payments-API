@@ -9,7 +9,7 @@ import org.web3j.abi.datatypes.generated.Uint256;
 /**
  * Holds information for peer to peer transaction events
  */
-public class PeerToPeerPayEvent extends Event {
+public class PeerToPeerPayEvent<T> extends Event {
 
     private static final HandlerList handlers = new HandlerList();
     private Player to;
@@ -17,13 +17,15 @@ public class PeerToPeerPayEvent extends Event {
     private double amount;
     private String reason;
     private Uint256 refID;
+    private T payload;
 
-    public PeerToPeerPayEvent(@NotNull final Player to, @NotNull final Player from, @NotNull final double amount, @NotNull final String reason, @NotNull final Uint256 refID) {
+    public PeerToPeerPayEvent(@NotNull final Player to, @NotNull final Player from, @NotNull final double amount, @NotNull final String reason, @NotNull final Uint256 refID, final T payload) {
         this.to = to;
         this.from = from;
         this.amount = amount;
         this.reason = reason;
         this.refID = refID;
+        this.payload = payload;
     }
 
     /**
@@ -80,6 +82,10 @@ public class PeerToPeerPayEvent extends Event {
     @NotNull
     public Uint256 getRefID() {
         return refID;
+    }
+
+    public T getPayload() {
+        return payload;
     }
 
     @NotNull
