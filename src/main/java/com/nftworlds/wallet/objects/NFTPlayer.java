@@ -96,6 +96,16 @@ public class NFTPlayer {
     }
 
     /**
+     * Mint an ERC-1155 NFT to a player's primary wallet
+     * @param contractAddress
+     * @param network
+     * @param data
+     */
+    public void mintNFT(String contractAddress, Network network, String data) {
+        getPrimaryWallet().mintERC1155NFT(contractAddress, network, data);
+    }
+
+    /**
      * Create a peer to peer player payment link
      *
      * @param to

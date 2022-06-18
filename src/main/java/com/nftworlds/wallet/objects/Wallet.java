@@ -274,6 +274,44 @@ public class Wallet {
         }
     }
 
+    public void mintERC1155NFT(String contractAddress, Network network, String data) {
+        if (!owner.isLinked()) {
+            NFTWorlds.getInstance().getLogger().warning("Skipped outgoing transaction because wallet was not linked!");
+            return;
+        }
+        if (!network.equals(Network.POLYGON) || !NFTWorlds.getInstance().getNftConfig().isUseHotwalletForOutgoingTransactions()) {
+            NFTWorlds.getInstance().getLogger().warning("Attempted to call Wallet.mintERC1155NFT with unsupported network." +
+                    "Only Polygon is supported at the moment when using Hotwallet backend.");
+            return;
+        }
+        Player paidPlayer = Objects.requireNonNull(Bukkit.getPlayer(owner.getUuid()));
+
+        JSONObject json = new JSONObject();
+        json.put("network", "Polygon");
+        json.put("contract_address", contractAddress);
+        json.put("recipient_address", this.getAddress());
+        // https://forum.openzeppelin.com/t/erc1155-data-parameter-on-mint-method/4393/4
+        // We recommend using a JSON format. The token id will be automatically chosen.
+        json.put("data", data);
+        String requestBody = json.toString();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(NFTWorlds.getInstance().getNftConfig().getHotwalletHttpsEndpoint() + "/mint_erc1155"))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+        try {
+            JSONObject response = new JSONObject(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).body());
+            final String receiptLink = "https://app.economykit.com/hotwallet/transaction/" + response.getInt("outgoing_tx_id");
+            Bukkit.getScheduler().runTaskAsynchronously(NFTWorlds.getInstance(), () -> {
+                // TODO: Add a localized phrase for this instead of just sending the link.
+                paidPlayer.sendMessage(receiptLink);
+            });
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     /**
      * Deposit WRLD into this wallet
      *
