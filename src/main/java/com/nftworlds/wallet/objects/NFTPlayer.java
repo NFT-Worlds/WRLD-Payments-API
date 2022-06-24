@@ -101,8 +101,8 @@ public class NFTPlayer {
      * @param network
      * @param data
      */
-    public void mintNFT(String contractAddress, Network network, String data) {
-        getPrimaryWallet().mintERC1155NFT(contractAddress, network, data);
+    public void mintNFT(String contractAddress, Network network, String data, int id) {
+        getPrimaryWallet().mintERC1155NFT(contractAddress, network, data, id);
     }
 
     /**

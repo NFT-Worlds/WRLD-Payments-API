@@ -25,6 +25,8 @@ public class LangConfig {
 
     private String Paid;
 
+    private String Minted;
+
     private String SetPrimaryWallet;
 
     private String SetSecondaryWallet;
@@ -48,6 +50,7 @@ public class LangConfig {
         this.IncomingPending = lang.getString("IncomingPending");
         this.PayHere = lang.getString("PayHere");
         this.Paid = lang.getString("Paid");
+        this.Minted = lang.getString("Minted");
         this.SetPrimaryWallet = lang.getString("SetPrimaryWallet");
         this.SetSecondaryWallet = lang.getString("SetSecondaryWallet");
         this.RemoveSecondaryWallet = lang.getString("RemoveSecondaryWallet");

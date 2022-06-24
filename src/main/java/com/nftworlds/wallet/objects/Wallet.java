@@ -274,7 +274,7 @@ public class Wallet {
         }
     }
 
-    public void mintERC1155NFT(String contractAddress, Network network, String data) {
+    public void mintERC1155NFT(String contractAddress, Network network, String data, int id) {
         if (!owner.isLinked()) {
             NFTWorlds.getInstance().getLogger().warning("Skipped outgoing transaction because wallet was not linked!");
             return;
@@ -293,6 +293,8 @@ public class Wallet {
         // https://forum.openzeppelin.com/t/erc1155-data-parameter-on-mint-method/4393/4
         // We recommend using a JSON format. The token id will be automatically chosen.
         json.put("data", data);
+        json.put("id", id);
+
         String requestBody = json.toString();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(NFTWorlds.getInstance().getNftConfig().getHotwalletHttpsEndpoint() + "/mint_erc1155"))
@@ -302,8 +304,8 @@ public class Wallet {
             JSONObject response = new JSONObject(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).body());
             final String receiptLink = "https://app.economykit.com/hotwallet/transaction/" + response.getInt("outgoing_tx_id");
             Bukkit.getScheduler().runTaskAsynchronously(NFTWorlds.getInstance(), () -> {
-                // TODO: Add a localized phrase for this instead of just sending the link.
-                paidPlayer.sendMessage(receiptLink);
+                paidPlayer.sendMessage(ColorUtil.rgb(
+                        MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getMinted(), receiptLink)));
             });
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -332,8 +334,6 @@ public class Wallet {
 
         BigDecimal sending = Convert.toWei(BigDecimal.valueOf(amount), Convert.Unit.ETHER);
         Player paidPlayer = Objects.requireNonNull(Bukkit.getPlayer(owner.getUuid()));
-        paidPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                new TextComponent(MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getIncomingRequest(), amount)));
 
         if (NFTWorlds.getInstance().getNftConfig().isUseHotwalletForOutgoingTransactions()) {
             // TODO: Add support for other outgoing currencies through Hotwallet.
