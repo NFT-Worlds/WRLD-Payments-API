@@ -284,7 +284,7 @@ public class Wallet {
                     "Only Polygon is supported at the moment when using Hotwallet backend.");
             return;
         }
-        Player paidPlayer = Objects.requireNonNull(Bukkit.getPlayer(owner.getUuid()));
+        Player paidPlayer = Bukkit.getPlayer(owner.getUuid());
 
         JSONObject json = new JSONObject();
         json.put("network", "Polygon");
@@ -304,8 +304,12 @@ public class Wallet {
             JSONObject response = new JSONObject(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).body());
             final String receiptLink = "https://app.economykit.com/hotwallet/transaction/" + response.getInt("outgoing_tx_id");
             Bukkit.getScheduler().runTaskAsynchronously(NFTWorlds.getInstance(), () -> {
-                paidPlayer.sendMessage(ColorUtil.rgb(
-                        MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getMinted(), receiptLink)));
+                if (paidPlayer != null) {
+                    paidPlayer.sendMessage(ColorUtil.rgb(
+                            MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getMinted(), receiptLink)));
+                } else {
+                    NFTWorlds.getInstance().getLogger().info("Sent offline ERC-1155 mint: " + receiptLink);
+                }
             });
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -333,7 +337,7 @@ public class Wallet {
         }
 
         BigDecimal sending = Convert.toWei(BigDecimal.valueOf(amount), Convert.Unit.ETHER);
-        Player paidPlayer = Objects.requireNonNull(Bukkit.getPlayer(owner.getUuid()));
+        Player paidPlayer = Bukkit.getPlayer(owner.getUuid());
 
         if (NFTWorlds.getInstance().getNftConfig().isUseHotwalletForOutgoingTransactions()) {
             // TODO: Add support for other outgoing currencies through Hotwallet.
@@ -351,13 +355,7 @@ public class Wallet {
                 JSONObject response = new JSONObject(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).body());
                 final String receiptLink = "https://app.economykit.com/hotwallet/transaction/" + response.getInt("outgoing_tx_id");
                 Bukkit.getScheduler().runTaskAsynchronously(NFTWorlds.getInstance(), () -> {
-                    AsyncPlayerPaidFromServerWalletEvent walletEvent = new AsyncPlayerPaidFromServerWalletEvent(paidPlayer, amount, network, reason, receiptLink);
-                    walletEvent.callEvent();
-
-                    if (walletEvent.isDefaultReceiveMessage()) {
-                        paidPlayer.sendMessage(ColorUtil.rgb(
-                                MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getPaid(), reason, receiptLink)));
-                    }
+                    postPaymentEvent(amount, network, reason, paidPlayer, receiptLink);
                 });
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
@@ -368,13 +366,7 @@ public class Wallet {
                 final PolygonWRLDToken polygonWRLDTokenContract = NFTWorlds.getInstance().getWrld().getPolygonWRLDTokenContract();
                 polygonWRLDTokenContract.transfer(this.getAddress(), sending.toBigInteger()).sendAsync().thenAccept((c) -> {
                     final String receiptLink = "https://polygonscan.com/tx/" + c.getTransactionHash();
-                    AsyncPlayerPaidFromServerWalletEvent walletEvent = new AsyncPlayerPaidFromServerWalletEvent(paidPlayer, amount, network, reason, receiptLink);
-                    walletEvent.callEvent();
-
-                    if (walletEvent.isDefaultReceiveMessage()) {
-                        paidPlayer.sendMessage(ColorUtil.rgb(
-                                MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getPaid(), reason, receiptLink)));
-                    }
+                    postPaymentEvent(amount, network, reason, paidPlayer, receiptLink);
                 }).exceptionally(error -> {
                     NFTWorlds.getInstance().getLogger().warning("Caught error in transfer function exceptionally: " + error);
                     return null;
@@ -383,6 +375,20 @@ public class Wallet {
                 NFTWorlds.getInstance().getLogger().warning("caught error in payWrld:");
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void postPaymentEvent(double amount, Network network, String reason, Player paidPlayer, String receiptLink) {
+        if (paidPlayer != null) {
+            AsyncPlayerPaidFromServerWalletEvent walletEvent = new AsyncPlayerPaidFromServerWalletEvent(paidPlayer, amount, network, reason, receiptLink);
+            walletEvent.callEvent();
+
+            if (walletEvent.isDefaultReceiveMessage()) {
+                paidPlayer.sendMessage(ColorUtil.rgb(
+                        MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getPaid(), reason, receiptLink)));
+            }
+        } else {
+            NFTWorlds.getInstance().getLogger().info("Paid offline player: " + receiptLink);
         }
     }
 
