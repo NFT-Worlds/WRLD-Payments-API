@@ -4,8 +4,8 @@ import com.nftworlds.wallet.NFTWorlds;
 import com.nftworlds.wallet.contracts.nftworlds.Players;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -78,9 +78,10 @@ public class NFTPlayer {
      * @param reason
      * @param canDuplicate
      * @param payload
+     * @return If $WRLD request was successful
      */
-    public <T> void requestWRLD(double amount, Network network, String reason, boolean canDuplicate, T payload) throws IOException, InterruptedException {
-        getPrimaryWallet().requestWRLD(amount, network, reason, canDuplicate, payload);
+    public <T> boolean requestWRLD(@NotNull double amount, @NotNull Network network, @NotNull String reason, @NotNull boolean canDuplicate, @NotNull T payload) {
+        return getPrimaryWallet().requestWRLD(amount, network, reason, canDuplicate, payload);
     }
 
 
@@ -90,19 +91,22 @@ public class NFTPlayer {
      * @param amount
      * @param network
      * @param reason
+     * @return If $WRLD send was successful
      */
-    public void sendWRLD(double amount, Network network, String reason) {
-        getPrimaryWallet().payWRLD(amount, network, reason);
+    public boolean sendWRLD(@NotNull double amount, @NotNull Network network, @NotNull String reason) {
+        return getPrimaryWallet().payWRLD(amount, network, reason);
     }
 
     /**
      * Mint an ERC-1155 NFT to a player's primary wallet
+     *
      * @param contractAddress
      * @param network
      * @param data
+     * @return If NFT was minted
      */
-    public void mintNFT(String contractAddress, Network network, String data, int id) {
-        getPrimaryWallet().mintERC1155NFT(contractAddress, network, data, id);
+    public boolean mintNFT(@NotNull String contractAddress, @NotNull Network network, @NotNull String data, @NotNull int id) {
+        return getPrimaryWallet().mintERC1155NFT(contractAddress, network, data, id);
     }
 
     /**
@@ -112,9 +116,10 @@ public class NFTPlayer {
      * @param amount
      * @param network
      * @param reason
+     * @return If player payment link was successfully created
      */
-    public void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason) {
-        getPrimaryWallet().createPlayerPayment(to, amount, network, reason);
+    public boolean createPlayerPayment(@NotNull NFTPlayer to, @NotNull double amount, @NotNull Network network, @NotNull String reason) {
+        return getPrimaryWallet().createPlayerPayment(to, amount, network, reason);
     }
 
     /**
@@ -125,9 +130,10 @@ public class NFTPlayer {
      * @param network
      * @param reason
      * @param payload
+     * @return If player payment link was successfully created
      */
-    public <T> void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason, T payload) {
-        getPrimaryWallet().createPlayerPayment(to, amount, network, reason, payload);
+    public <T> boolean createPlayerPayment(@NotNull NFTPlayer to, @NotNull double amount, @NotNull Network network, @NotNull String reason, @NotNull T payload) {
+        return getPrimaryWallet().createPlayerPayment(to, amount, network, reason, payload);
     }
 
     /**
@@ -164,7 +170,7 @@ public class NFTPlayer {
     }
 
     public static NFTPlayer getByUUID(UUID uuid) {
-        return players.get(uuid);
+        return players.getOrDefault(uuid, null);
     }
 
 }

@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
+import org.jetbrains.annotations.NotNull;
 import org.json.HTTP;
 import org.json.JSONObject;
 import org.web3j.abi.datatypes.generated.Uint256;
@@ -232,8 +233,9 @@ public class Wallet {
      * @param reason
      * @param canDuplicate
      * @param payload
+     * @return If $WRLD request was successful
      */
-    public <T> void requestWRLD(double amount, Network network, String reason, boolean canDuplicate, T payload) throws IOException, InterruptedException {
+    public <T> boolean requestWRLD(@NotNull double amount, @NotNull Network network, @NotNull String reason, @NotNull boolean canDuplicate, @NotNull T payload) {
         NFTWorlds nftWorlds = NFTWorlds.getInstance();
 
         UUID uuid = owner.getUuid();
@@ -251,7 +253,13 @@ public class Wallet {
             QRMapManager renderer = new QRMapManager();
             player.sendMessage(ColorUtil.rgb(MessageFormat.format(NFTWorlds.getInstance().getLangConfig().getIncomingRequest(), reason)));
             if (Bukkit.getServer().getPluginManager().getPlugin("Geyser-Spigot") != null && org.geysermc.connector.GeyserConnector.getInstance().getPlayerByUuid(player.getUniqueId()) != null) {
-                String shortLink = LinkUtils.shortenURL(paymentLink);
+                String shortLink;
+                try {
+                    shortLink = LinkUtils.shortenURL(paymentLink);
+                } catch (IOException | InterruptedException ex) {
+                    ex.printStackTrace();
+                    return false;
+                }
                 renderer.load(shortLink);
                 // TODO: Better error handling
                 view.addRenderer(renderer);
@@ -271,18 +279,20 @@ public class Wallet {
                 player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
             }
             player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
+            return true;
         }
+        return false;
     }
 
-    public void mintERC1155NFT(String contractAddress, Network network, String data, int id) {
+    public boolean mintERC1155NFT(String contractAddress, Network network, String data, int id) {
         if (!owner.isLinked()) {
             NFTWorlds.getInstance().getLogger().warning("Skipped outgoing transaction because wallet was not linked!");
-            return;
+            return false;
         }
         if (!network.equals(Network.POLYGON) || !NFTWorlds.getInstance().getNftConfig().isUseHotwalletForOutgoingTransactions()) {
             NFTWorlds.getInstance().getLogger().warning("Attempted to call Wallet.mintERC1155NFT with unsupported network." +
                     "Only Polygon is supported at the moment when using Hotwallet backend.");
-            return;
+            return false;
         }
         Player paidPlayer = Bukkit.getPlayer(owner.getUuid());
 
@@ -313,8 +323,9 @@ public class Wallet {
             });
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            return false;
         }
-
+        return true;
     }
 
 
@@ -324,16 +335,17 @@ public class Wallet {
      * @param amount
      * @param network
      * @param reason
+     * @return If $WRLD send was successful
      */
-    public void payWRLD(double amount, Network network, String reason) {
+    public boolean payWRLD(@NotNull double amount, @NotNull Network network, @NotNull String reason) {
         if (!owner.isLinked()) {
             NFTWorlds.getInstance().getLogger().warning("Skipped outgoing transaction because wallet was not linked!");
-            return;
+            return false;
         }
         if (!network.equals(Network.POLYGON)) {
             NFTWorlds.getInstance().getLogger().warning("Attempted to call Wallet.payWRLD with unsupported network. " +
                     "Only Polygon is supported in this plugin at the moment.");
-            return;
+            return false;
         }
 
         BigDecimal sending = Convert.toWei(BigDecimal.valueOf(amount), Convert.Unit.ETHER);
@@ -359,6 +371,7 @@ public class Wallet {
                 });
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
+                return false;
             }
         } else {
             try {
@@ -374,8 +387,10 @@ public class Wallet {
             } catch (Exception e) {
                 NFTWorlds.getInstance().getLogger().warning("caught error in payWrld:");
                 e.printStackTrace();
+                return false;
             }
         }
+        return true;
     }
 
     private void postPaymentEvent(double amount, Network network, String reason, Player paidPlayer, String receiptLink) {
@@ -400,23 +415,24 @@ public class Wallet {
      * @param network
      * @param reason
      * @param payload
+     * @return If player payment link was successfully created
      */
-    public <T> void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason, T payload) {
+    public <T> boolean createPlayerPayment(@NotNull NFTPlayer to, @NotNull double amount, @NotNull Network network, @NotNull String reason, @NotNull T payload) {
         NFTWorlds nftWorlds = NFTWorlds.getInstance();
-        if (to != null) {
-            Player player = Bukkit.getPlayer(owner.getUuid());
-            if (player != null) {
-                if (!to.isLinked()) {
-                    player.sendMessage(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPlayerNoLinkedWallet()));
-                    return;
-                }
-                Uint256 refID = new Uint256(new BigInteger(256, new Random()));
-                long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
-                new PeerToPeerPayment(to, owner, amount, refID, network, reason, timeout, payload);
-                String paymentLink = "https://nftworlds.com/pay/?to=" + to.getPrimaryWallet().getAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000);
-                player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
+        Player player = Bukkit.getPlayer(owner.getUuid());
+        if (player != null) {
+            if (!to.isLinked()) {
+                player.sendMessage(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPlayerNoLinkedWallet()));
+                return false;
             }
+            Uint256 refID = new Uint256(new BigInteger(256, new Random()));
+            long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
+            new PeerToPeerPayment(to, owner, amount, refID, network, reason, timeout, payload);
+            String paymentLink = "https://nftworlds.com/pay/?to=" + to.getPrimaryWallet().getAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000);
+            player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
+            return true;
         }
+        return false;
     }
 
     /**
@@ -426,23 +442,24 @@ public class Wallet {
      * @param amount
      * @param network
      * @param reason
+     * @return If player payment link was successfully created
      */
-    public <T> void createPlayerPayment(NFTPlayer to, double amount, Network network, String reason) {
+    public <T> boolean createPlayerPayment(@NotNull NFTPlayer to, @NotNull double amount, @NotNull Network network, @NotNull String reason) {
         NFTWorlds nftWorlds = NFTWorlds.getInstance();
-        if (to != null) {
-            Player player = Bukkit.getPlayer(owner.getUuid());
-            if (player != null) {
-                if (!to.isLinked()) {
-                    player.sendMessage(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPlayerNoLinkedWallet()));
-                    return;
-                }
-                Uint256 refID = new Uint256(new BigInteger(256, new Random()));
-                long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
-                new PeerToPeerPayment(to, owner, amount, refID, network, reason, timeout, null);
-                String paymentLink = "https://nftworlds.com/pay/?to=" + to.getPrimaryWallet().getAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000);
-                player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
+        Player player = Bukkit.getPlayer(owner.getUuid());
+        if (player != null) {
+            if (!to.isLinked()) {
+                player.sendMessage(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPlayerNoLinkedWallet()));
+                return false;
             }
+            Uint256 refID = new Uint256(new BigInteger(256, new Random()));
+            long timeout = Instant.now().plus(nftWorlds.getNftConfig().getLinkTimeout(), ChronoUnit.SECONDS).toEpochMilli();
+            new PeerToPeerPayment(to, owner, amount, refID, network, reason, timeout, null);
+            String paymentLink = "https://nftworlds.com/pay/?to=" + to.getPrimaryWallet().getAddress() + "&amount=" + amount + "&ref=" + refID.getValue().toString() + "&expires=" + (int) (timeout / 1000);
+            player.sendMessage(MessageFormat.format(ColorUtil.rgb(NFTWorlds.getInstance().getLangConfig().getPayHere()), paymentLink));
+            return true;
         }
+        return false;
     }
 
     @Override

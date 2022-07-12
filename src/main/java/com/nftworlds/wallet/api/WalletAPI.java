@@ -7,6 +7,8 @@ import com.nftworlds.wallet.objects.Network;
 import com.nftworlds.wallet.objects.TransactionObjects;
 import com.nftworlds.wallet.objects.Wallet;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.io.IOException;
@@ -17,37 +19,45 @@ public class WalletAPI {
 
     /**
      * Get an NFT Player
+     *
      * @param uuid
      * @return NFT Player
      */
-    public NFTPlayer getNFTPlayer(UUID uuid) {
+    @Nullable
+    public NFTPlayer getNFTPlayer(@NotNull UUID uuid) {
         return NFTPlayer.getByUUID(uuid);
     }
 
     /**
      * Get an NFT Player
+     *
      * @param player
      * @return NFT Player
      */
-    public NFTPlayer getNFTPlayer(Player player) {
+    @Nullable
+    public NFTPlayer getNFTPlayer(@NotNull Player player) {
         return NFTPlayer.getByUUID(player.getUniqueId());
     }
 
     /**
      * Get a player's wallet
+     *
      * @param player
      * @return player's wallet
      */
-    public List<Wallet> getWallets(Player player) {
+    @Nullable
+    public List<Wallet> getWallets(@NotNull Player player) {
         return getWallets(player.getUniqueId());
     }
 
     /**
      * Get a player's wallet
+     *
      * @param uuid
      * @return player's wallet
      */
-    public List<Wallet> getWallets(UUID uuid) {
+    @Nullable
+    public List<Wallet> getWallets(@NotNull UUID uuid) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
             return player.getWallets();
@@ -57,19 +67,23 @@ public class WalletAPI {
 
     /**
      * Get a player's primary wallet
+     *
      * @param player
      * @return player's wallet
      */
-    public Wallet getPrimaryWallet(Player player) {
+    @Nullable
+    public Wallet getPrimaryWallet(@NotNull Player player) {
         return getPrimaryWallet(player.getUniqueId());
     }
 
     /**
      * Get a player's primary wallet
+     *
      * @param uuid
      * @return player's wallet
      */
-    public Wallet getPrimaryWallet(UUID uuid) {
+    @Nullable
+    public Wallet getPrimaryWallet(@NotNull UUID uuid) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
             return player.getPrimaryWallet();
@@ -79,86 +93,102 @@ public class WalletAPI {
 
     /**
      * Send a request for a WRLD transaction to a player
+     *
      * @param uuid
      * @param amount
      * @param network
      * @param reason
      * @param canDuplicate
      * @param payload
+     * @return If $WRLD request was successful
      */
-    public <T> void requestWRLD(UUID uuid, double amount, Network network, String reason, boolean canDuplicate, T payload) throws IOException, InterruptedException {
+    public <T> boolean requestWRLD(@NotNull UUID uuid, @NotNull double amount, @NotNull Network network, @NotNull String reason, @NotNull boolean canDuplicate, @NotNull T payload) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
-            player.requestWRLD(amount, network, reason, canDuplicate, payload);
+            return player.requestWRLD(amount, network, reason, canDuplicate, payload);
         }
+        return false;
     }
 
     /**
      * Send WRLD to a player's primary wallet
+     *
      * @param uuid
      * @param amount
      * @param network
      * @param reason
+     * @return If $WRLD send was successful
      */
-    public void sendWRLD(UUID uuid, double amount, Network network, String reason) {
+    public boolean sendWRLD(@NotNull UUID uuid, @NotNull double amount, @NotNull Network network, @NotNull String reason) {
         NFTPlayer player = NFTPlayer.getByUUID(uuid);
         if (player != null) {
-            player.sendWRLD(amount, network, reason);
+            return player.sendWRLD(amount, network, reason);
         }
+        return false;
     }
 
     /**
      * Send WRLD to a player's primary wallet
+     *
      * @param player
      * @param amount
      * @param network
      * @param reason
+     * @return If $WRLD send was successful
      */
-    public void sendWRLD(Player player, double amount, Network network, String reason) {
+    public boolean sendWRLD(@NotNull Player player, @NotNull double amount, @NotNull Network network, @NotNull String reason) {
         NFTPlayer p = NFTPlayer.getByUUID(player.getUniqueId());
         if (p != null) {
-            p.sendWRLD(amount, network, reason);
+            return p.sendWRLD(amount, network, reason);
         }
+        return false;
     }
 
     /**
      * Create a peer to peer payment link
+     *
      * @param from
      * @param to
      * @param amount
      * @param network
      * @param reason
+     * @return If player payment link was successfully created
      */
-    public void createPlayerPayment(Player from, Player to, double amount, Network network, String reason) {
+    public boolean createPlayerPayment(@NotNull Player from, @NotNull Player to, @NotNull double amount, @NotNull Network network, @NotNull String reason) {
         NFTPlayer nftPlayerFrom = NFTPlayer.getByUUID(from.getUniqueId());
         NFTPlayer nftPlayerTo = NFTPlayer.getByUUID(to.getUniqueId());
         if (nftPlayerFrom != null && nftPlayerTo != null) {
-            nftPlayerFrom.createPlayerPayment(nftPlayerTo, amount, network, reason);
+            return nftPlayerFrom.createPlayerPayment(nftPlayerTo, amount, network, reason);
         }
+        return false;
     }
 
     /**
      * Create a peer to peer payment link
+     *
      * @param from
      * @param to
      * @param amount
      * @param network
      * @param reason
      * @param payload
+     * @return If player payment link was successfully created
      */
-    public <T> void createPlayerPayment(Player from, Player to, double amount, Network network, String reason, T payload) {
+    public <T> boolean createPlayerPayment(@NotNull Player from, @NotNull Player to, @NotNull double amount, @NotNull Network network, @NotNull String reason, @NotNull T payload) {
         NFTPlayer nftPlayerFrom = NFTPlayer.getByUUID(from.getUniqueId());
         NFTPlayer nftPlayerTo = NFTPlayer.getByUUID(to.getUniqueId());
         if (nftPlayerFrom != null && nftPlayerTo != null) {
-            nftPlayerFrom.createPlayerPayment(nftPlayerTo, amount, network, reason, payload);
+            return nftPlayerFrom.createPlayerPayment(nftPlayerTo, amount, network, reason, payload);
         }
+        return false;
     }
 
     /**
      * Register a custom ERC20 token. This should be called during startup.
+     *
      * @param contractAddress
      */
-    public void registerERC20(String contractAddress, Network network) {
+    public void registerERC20(@NotNull String contractAddress, @NotNull Network network) {
         if (network.equals(Network.POLYGON)) {
             ERC20 newToken = ERC20.load(
                     contractAddress,
